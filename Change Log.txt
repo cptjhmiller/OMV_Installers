@@ -1,0 +1,18 @@
+Fixed Sickbeard updating issues (you will need to reinstall/update via omv.sh)
+Added a lot a debuging routines to help trace problems
+Reduced number of key presses during installs (y/n without having to press enter)
+Added option to change IP/Host address
+Force user to enter IP if it is set to localhost
+Deluge updated to 1.3.6 was 1.3.5
+Fixed Deluge not starting when ran as deluge user
+Replaced Newznab free with nZEDb (updated version of Newznab free)
+Removed install of Sphinx from Newznab+ (most users agree its not needed)
+Added option to install 3rd party applications, Ffmpeg, Lame, MediaInfo etc.
+Updated Java (SubSonic) to 7.21
+Better Mysql handeling
+Fix problems with exsisting Mysql install
+Show % complete on more installs
+Fixed issues with Auto-Sub Webui
+Re-installing Auto-Sub will update exsisting install and NOT reset user settings
+Fixed Auto-Sub not opening from side menu
+
