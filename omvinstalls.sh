@@ -47,7 +47,7 @@ echo "";
 changelocation()
 {
 cd /
-INSTALLDIR=""
+INSTALLDIR="/"
 selected=0
 echo "";
 while [[ "$selected" -eq 0 ]] ; do
