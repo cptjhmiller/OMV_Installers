@@ -47,7 +47,8 @@ echo "";
 changelocation()
 {
 cd /
-INSTALLDIR="/"
+INSTALLDIR=""
+WHERE=""
 selected=0
 echo "";
 while [[ "$selected" -eq 0 ]] ; do
@@ -65,12 +66,12 @@ while [[ "$selected" -eq 0 ]] ; do
 	echo "" && echo "Type the ID of the Destination folder or 0 to select current folder:"
 	# Asking user for its selection
 	read answer && sel_item="$(echo "sel$answer")"
-	$INSTALLDIR=${!sel_item}
-	if [ "$INSTALLDIR" == "Select current folder" ]; then INSTALLDIR="$(pwd)" && selected=1
-	elif [ "$INSTALLDIR" == ".." ]; then cd "$(dirname $(pwd))"
-	elif [[ "$(pwd)" == "/" && -d "/$INSTALLDIR" ]]; then cd "/$INSTALLDIR"
-	elif [ -d "$(pwd)/$INSTALLDIR" ]; then cd "$(pwd)/$INSTALLDIR"
+	WHERE=${!sel_item}
+	if [ "$WHERE" == "Select current folder" ]; then INSTALLDIR="$(pwd)" && selected=1
 	elif [ "$answer" == "0" ]; then INSTALLDIR="$(pwd)" && selected=1
+	elif [ "$WHERE" == ".." ]; then cd "$(dirname $(pwd))"
+	elif [[ "$(pwd)" == "/" && -d "/$WHERE" ]]; then cd "/$WHERE"
+	elif [ -d "$(pwd)/$WHERE" ]; then cd "$(pwd)/$WHERE"
 	fi
 	echo ""
 done
