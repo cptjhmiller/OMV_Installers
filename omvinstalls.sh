@@ -2340,7 +2340,7 @@ esac
 exit 0' > /etc/init.d/pyload
 mkdir -p /root/.pyload > /dev/null 2>&1
 cd /root/.pyload > /dev/null 2>&1
-wget https://raw.github.com/cptjhmiller/OMV_Installers/master/files.tar.gz > /dev/null 2>&1
+wget https://raw.github.com/cptjhmiller/OMV_Installers/master/files.tar.gz --no-check-certificate > /dev/null 2>&1
 tar zxvf files.tar.gz > /dev/null 2>&1
 cd /tmp > /dev/null 2>&1
 echo 'version: 1
@@ -3305,7 +3305,7 @@ OMV.NavigationPanelMgr.registerPanel("services", "'${service}'", {
 });' > /var/www/openmediavault/js/omv/module/$service.js
 		if ! [ -e /var/www/openmediavault/images/$service.png ]; then
 			cd /var/www/openmediavault/images
-			wget https://raw.github.com/cptjhmiller/OMV_Installers/master/images/$service.png > /dev/null 2>&1
+			wget https://raw.github.com/cptjhmiller/OMV_Installers/master/images/$service.png --no-check-certificate > /dev/null 2>&1
 			cd /tmp
 		fi
 else
