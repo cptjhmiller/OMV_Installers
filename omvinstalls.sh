@@ -620,7 +620,9 @@ menu;
 esac
 done
 
-if [ "$uinst" != "1" ]; then
+if [ "$uinst" = "1" ]; then
+	menu;
+else
 	showinstall;
 fi
 }
@@ -3323,7 +3325,7 @@ else
 	rm /var/www/openmediavault/js/omv/module/$service.js > /dev/null 2>&1
 	link="0"
 fi
-uinst="0"
+uinst="1"
 }
 
 finish()
