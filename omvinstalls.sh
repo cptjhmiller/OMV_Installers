@@ -613,7 +613,7 @@ changelocation;
 ;;
 [Qq]) exit ;;
 *)
-menu
+menu;
 ;;
 esac
 done
