@@ -439,13 +439,15 @@ echo "           9. Sabnzbdplus                   18. Extplorer"
 echo "                                19. MyLar"
 echo ""
 echo "                                 Q. Quit"
-if [ "$INSTALLDIR" == "" ]
-then
+if [ "$INSTALLDIR" == "" ]; then
 	echo "           [I]p:${ip}             [F]older:root of drive"
 else
 	echo "           [I]p:${ip}             [F]older:${INSTALLDIR}"
 fi
 read -p "Selection:> " SELECT
+if [ "$SELECT" == "" ]; then
+	menu;
+fi
 #items=( $SELECT )
 for item in ${SELECT[@]}; do
 case "$item" in
