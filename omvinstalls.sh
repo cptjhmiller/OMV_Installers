@@ -1151,7 +1151,7 @@ echo
 echo "    *****************You selected to install MyLar***********************";
 echo
 echo "Downloading and installing MyLar...";
-git clone git://github.com/evilhero/mylar.git new_GZ > /dev/null
+git clone git://github.com/evilhero/mylar.git new_ML > /dev/null
 ret=$?
 if ! test "$ret" -eq 0; then
     echo >&2 "git clone mylar failed with exit status $ret"
