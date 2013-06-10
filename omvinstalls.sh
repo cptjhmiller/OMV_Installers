@@ -40,7 +40,7 @@ screen()
 clear;
 echo "";
 echo "    -------------------------------Millers-------------------------------";
-echo "              OpenMediaVault Multi Application Installer V1.6.0          ";
+echo "              OpenMediaVault Multi Application Installer V1.7.0          ";
 echo "";
 }
 
@@ -362,6 +362,7 @@ rm -fR /var/lib/dpkg/info/subsonic.list > /dev/null 2>&1
 rm -fR /var/lib/dpkg/info/subsonic.postrm > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/MusicCabinet.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/MusicCabinet.js > /dev/null 2>&1
+apt-get -y purge postgresql-contrib-9.2 postgresql-9.2 pgdg-keyring postgresql-common postgresql-client-9.2 postgresql-client-common
 }
 
 getmysql()
@@ -454,7 +455,7 @@ echo "           6. SickBeard Torrent             15. Maraschino"
 echo "           7. HeadPhones (Master)           16. Deluge"
 echo "           8. HeadPhones (Develop)          17. Auto-Sub"
 echo "           9. Sabnzbdplus                   18. Extplorer"
-echo "                                19. MyLar"
+echo "          19. MyLar                         20. Music Cabinet"
 echo ""
 echo "                                 Q. Quit"
 if [ "$INSTALLDIR" == "" ]; then
