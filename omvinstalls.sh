@@ -1594,7 +1594,7 @@ dpkg -i subsonic-4.8.deb > /dev/null 2>&1
 echo "Setting up startup options"
 #/etc/init.d/subsonic stop > /dev/null 2>&1
 rm subsonic-4.8.deb
-if [ "$mc" != "1" ]; then
+if [ "$mc" == "0" ]; then
 	service="SubSonic"
 	address="http://$ip:4040"
 	panel;
