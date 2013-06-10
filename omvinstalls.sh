@@ -347,6 +347,23 @@ rm -fR /var/www/openmediavault/images/MyLar.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/MyLar.js > /dev/null 2>&1
 }
 
+Uninstall_MusicCabinet()
+{
+uinst="1"
+echo "uninstalling................MusicCabinet"
+service subsonic stop > /dev/null 2>&1
+sleep 2
+update-rc.d -f subsonic remove > /dev/null 2>&1
+rm -fR /etc/init.d/subsonic > /dev/null 2>&1
+/usr/bin/apt-get -qy remove subsonic > /dev/null 2>&1
+rm -fR /etc/default/subsonic > /dev/null 2>&1
+rm -fR /var/subsonic > /dev/null 2>&1
+rm -fR /var/lib/dpkg/info/subsonic.list > /dev/null 2>&1
+rm -fR /var/lib/dpkg/info/subsonic.postrm > /dev/null 2>&1
+rm -fR /var/www/openmediavault/images/MusicCabinet.png > /dev/null 2>&1
+rm -fR /var/www/openmediavault/js/omv/module/MusicCabinet.js > /dev/null 2>&1
+}
+
 getmysql()
 {
 screen;
@@ -397,6 +414,7 @@ del="0"
 sub="0"
 exp="0"
 ml="0"
+mc="0"
 uml="0"
 ucpv="0"
 ucpm="0"
@@ -527,6 +545,10 @@ Uninstall_Extplorer;
 -19)
 Uninstall_MyLar;
 ;;
+# Uninstall MusicCabinet
+-20)
+Uninstall_MusicCabinet;
+;;
 # CouchPotato
 1)
 cpv="1"
@@ -599,9 +621,13 @@ asub="1"
 18)
 exp="1"
 ;;
-# Extplorer
+# MaLar
 19)
 ml="1"
+;;
+# MusicCabinet
+20)
+mc="1"
 ;;
 # Change IP address
 I|i)
@@ -696,6 +722,10 @@ fi
 
 if [ "$sub" = "1" ]; then
 	echo "               SubSonic";
+fi
+
+if [ "$mc" = "1" ]; then
+	echo "               MusicCabinet";
 fi
 
 if [ "$llm" = "1" ]; then
@@ -996,6 +1026,10 @@ fi
 
 if [ "$exp" == "1" ]; then
 	install_EXP;
+fi
+
+if [ "$mc" == "1" ]; then
+	install_MC;
 fi
 }
 
@@ -2936,6 +2970,52 @@ chmod -R 777 /var/www/newznab
 setup_EXTRAS;
 }
 
+install_MC()
+{
+/etc/init.d/subsonic stop > /dev/null 2>&1
+screen;
+cd /tmp
+echo
+echo "    **************You selected to install MusicCabinet*******************";
+echo
+echo "Downloading and installing MusicCabinet...";
+echo "This one takes some time, please wait...";
+line=$(grep "deb http://apt.postgresql.org/pub/repos/apt/ squeeze-pgdg main" /etc/apt/sources.list.d/openmediavault-millers.list)
+if [ $? == 1 ]; then
+    echo "deb http://apt.postgresql.org/pub/repos/apt/ squeeze-pgdg main" >> /etc/apt/sources.list.d/openmediavault-millers.list
+fi
+if [ ! -e /var/subsonic ]; then
+	echo "SubSonic is not installed";
+	sleep 5
+	exit
+else
+	wget http://dilerium.se/musiccabinet/subsonic-installer-standalone.zip
+	unzip subsonic-installer-standalone.zip
+	rm /usr/share/subsonic/*
+	cp subsonic-installer-standalone/subsonic.sh /usr/share/subsonic
+	cp subsonic-installer-standalone/subsonic-booter-jar-with-dependencies.jar /usr/share/subsonic
+	cp subsonic-installer-standalone/subsonic.war /usr/share/subsonic
+	chmod 777 -R /usr/share/subsonic
+	wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | \
+		sudo apt-key add -
+	sudo apt-get update
+	#apt-get install postgresql-9.2 #
+	apt-get install postgresql-contrib-9.2 #Try this 1 next only
+	sudo -u postgres psql -c"ALTER user postgres WITH PASSWORD '1234'"
+	sudo service postgresql restart
+	echo 'MusicCabinetJDBCPassword=31323334' > /var/subsonic/subsonic.properties
+	if [ -e /var/subsonic/db ]; then
+		rm -R /var/subsonic/db
+	fi
+	service subsonic start
+	service="MusicCabinet"
+	address="http://$ip:4040"
+	panel;
+	rm -fR /var/www/openmediavault/images/SubSonic.png > /dev/null 2>&1
+	rm -fR /var/www/openmediavault/js/omv/module/SubSonic.js > /dev/null 2>&1
+fi
+}
+
 setup_EXTRAS()
 {
 screen;
@@ -3351,8 +3431,12 @@ if [ "$sbm" == "1" -o "$sbd" == "1" -o "$sbt" == "1" ]; then
 	echo "    	SickBeard     ---     http://$ip:8081"
 fi
 
-if [ "$sub" == "1" ]; then
+if [ "$sub" == "1" -a "$mc" != "1" ]; then
 	echo "    	SubSonic      ---     http://$ip:4040";
+fi
+
+if [ "$mc" == "1" ]; then
+	echo "    	MusicCabinet  ---     http://$ip:4040";
 fi
 
 if [ "$cpv" == "1" ]; then
