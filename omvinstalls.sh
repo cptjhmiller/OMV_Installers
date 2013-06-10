@@ -611,19 +611,21 @@ changeip;
 F|f)
 changelocation;
 ;;
-[Qq]) exit ;;
+[Q|q])
+exit
+;;
 *)
 menu;
 ;;
 esac
 done
+SELECT=""
 
 
-
-if [ "$uinst" == "1" ]; then
-menu;
+if [ "$uinst" = "1" -a "$SELECT" = ""]; then
+	menu;
 else
-showinstall;
+	showinstall;
 fi
 }
 
