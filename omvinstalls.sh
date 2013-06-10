@@ -1236,7 +1236,7 @@ sleep 5
 service mylar stop > /dev/null 2>&1
 chmod -R a+x $INSTALLDIR/mylar > /dev/null 2>&1
 service mylar start > /dev/null 2>&1
-service="mylar"
+service="MyLar"
 address="http://$ip:8090"
 panel;
 echo "";
@@ -3334,7 +3334,7 @@ echo "";
 echo "Access your new services via the following addresses:";
 echo "";
 
-if [ "$gz" == "1" ]; then
+if [ "$ml" == "1" ]; then
 	echo "";
 	echo "    	MyLar 	      ---     http://$ip:8090";
 fi
