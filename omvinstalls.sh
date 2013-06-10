@@ -2981,9 +2981,13 @@ echo "    **************You selected to install MusicCabinet*******************"
 echo
 echo "Downloading and installing MusicCabinet...";
 echo "This one takes some time, please wait...";
-line=$(grep "deb http://apt.postgresql.org/pub/repos/apt/ squeeze-pgdg main" /etc/apt/sources.list.d/openmediavault-millers.list)
-if [ $? == 1 ]; then
-    echo "deb http://apt.postgresql.org/pub/repos/apt/ squeeze-pgdg main" >> /etc/apt/sources.list.d/openmediavault-millers.list
+if [ -e /etc/apt/sources.list.d/openmediavault-millers.list ]; then
+	line=$(grep "deb http://apt.postgresql.org/pub/repos/apt/ squeeze-pgdg main" /etc/apt/sources.list.d/openmediavault-millers.list)
+		if [ $? == 1 ]; then
+			echo "deb http://apt.postgresql.org/pub/repos/apt/ squeeze-pgdg main" >> /etc/apt/sources.list.d/openmediavault-millers.list
+		fi
+else
+	echo "deb http://apt.postgresql.org/pub/repos/apt/ squeeze-pgdg main" > /etc/apt/sources.list.d/openmediavault-millers.list
 fi
 if [ ! -e /var/subsonic ]; then
 	echo "SubSonic is not installed";
@@ -2999,9 +3003,9 @@ else
 	chmod 777 -R /usr/share/subsonic
 	wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | \
 		sudo apt-key add -
-	sudo apt-get update -Ra 
+	sudo apt-get update > /dev/null 2>&1
 	#apt-get install postgresql-9.2 #
-	apt-get -y --force-yes install postgresql-contrib-9.2 #Try this 1 next only
+	apt-get -y --force-yes install postgresql-contrib-9.2
 	sudo -u postgres psql -c"ALTER user postgres WITH PASSWORD '1234'"
 	sudo service postgresql restart > /dev/null 2>&1
 	echo 'MusicCabinetJDBCPassword=31323334' > /var/subsonic/subsonic.properties
