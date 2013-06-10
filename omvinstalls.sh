@@ -1592,15 +1592,16 @@ wget http://switch.dl.sourceforge.net/project/subsonic/subsonic/4.8/subsonic-4.8
 # -O ./subsonic-4.7.deb > /dev/null 2>&1
 dpkg -i subsonic-4.8.deb > /dev/null 2>&1
 echo "Setting up startup options"
-/etc/init.d/subsonic restart > /dev/null 2>&1
-sleep 1
+#/etc/init.d/subsonic stop > /dev/null 2>&1
 rm subsonic-4.8.deb
-service="SubSonic"
-address="http://$ip:4040"
-panel;
-echo "";
-echo "Finished";
-sleep 1
+if [ "$mc" != "1" ]; then
+	service="SubSonic"
+	address="http://$ip:4040"
+	panel;
+	echo "";
+	echo "Finished";
+	sleep 1
+fi
 }
 
 install_EXP()
