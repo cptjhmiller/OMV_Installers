@@ -623,7 +623,7 @@ done
 if [ "$uinst" = "1" ]; then
 	menu;
 else
-	showinstall;
+	finish;
 fi
 }
 
@@ -3325,7 +3325,6 @@ else
 	rm /var/www/openmediavault/js/omv/module/$service.js > /dev/null 2>&1
 	link="0"
 fi
-uinst="1"
 }
 
 finish()
