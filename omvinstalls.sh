@@ -335,6 +335,7 @@ rm -fR /var/www/openmediavault/js/omv/module/Extplorer.js > /dev/null 2>&1
 Uninstall_MyLar()
 {
 uinst="1"
+echo "uninstalling................MyLar"
 service mylar stop > /dev/null 2>&1
 sleep 2
 rm -fR /etc/init.d/mylar  > /dev/null 2>&1
@@ -342,8 +343,8 @@ update-rc.d -f mylar remove > /dev/null 2>&1
 rm -fR $INSTALLDIR/mylar > /dev/null 2>&1
 sleep 2
 rm -fR /var/run/mylar.pid > /dev/null 2>&1
-rm -fR /var/www/openmediavault/images/mylar.png > /dev/null 2>&1
-rm -fR /var/www/openmediavault/js/omv/module/mylar.js > /dev/null 2>&1
+rm -fR /var/www/openmediavault/images/MyLar.png > /dev/null 2>&1
+rm -fR /var/www/openmediavault/js/omv/module/MyLar.js > /dev/null 2>&1
 }
 
 getmysql()
