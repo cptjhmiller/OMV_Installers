@@ -623,7 +623,7 @@ done
 if [ "$uinst" = "1" ]; then
 	menu;
 else
-	finish;
+	showinstall;
 fi
 }
 
@@ -735,6 +735,7 @@ if QUESTION; then
 else
 	menu;
 fi
+finish;
 }
 
 NEWZNABPT()
@@ -3442,7 +3443,7 @@ fi
 
 warnRoot;
 menu;
-finish;
+
 
 exit 0
 
