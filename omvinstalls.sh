@@ -637,7 +637,7 @@ changeip;
 F|f)
 changelocation;
 ;;
-[Q|q])
+Q|q)
 exit
 ;;
 *)
