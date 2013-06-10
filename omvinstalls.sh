@@ -622,7 +622,7 @@ done
 SELECT=""
 
 
-if [ "$uinst" = "1" -a "$SELECT" = ""]; then
+if [ "$uinst" = "1" -a "$SELECT" = "" ]; then
 	menu;
 else
 	showinstall;
