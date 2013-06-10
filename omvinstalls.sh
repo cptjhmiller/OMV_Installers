@@ -435,7 +435,7 @@ echo "           6. SickBeard Torrent             15. Maraschino"
 echo "           7. HeadPhones (Master)           16. Deluge"
 echo "           8. HeadPhones (Develop)          17. Auto-Sub"
 echo "           9. Sabnzbdplus                   18. Extplorer"
-echo "                                19. MyLar
+echo "                                19. MyLar"
 echo ""
 echo "                                 Q. Quit"
 if [ "$INSTALLDIR" == "" ]
@@ -595,6 +595,10 @@ asub="1"
 # Extplorer
 18)
 exp="1"
+;;
+# Extplorer
+19)
+ml="1"
 ;;
 # Change IP address
 I|i)
