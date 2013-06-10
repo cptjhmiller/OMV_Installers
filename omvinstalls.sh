@@ -620,7 +620,7 @@ done
 
 
 
-if [ "$uinst" = "1" ]; then
+if [ "$uinst" != "1" ]; then
 menu;
 else
 showinstall;
