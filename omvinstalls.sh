@@ -1163,8 +1163,8 @@ if [ -d $INSTALLDIR/mylar ]; then
 	rm -fR /tmp/new_ML
 else
 	mv /tmp/new_ML $INSTALLDIR/mylar
-	echo '[global]
-	server.socket_host = "0.0.0.0"' > $INSTALLDIR/mylar/Mylar.ini
+	#echo '[global]
+	#server.socket_host = "0.0.0.0"' > $INSTALLDIR/mylar/Mylar.ini
 fi
 #rm -fR $INSTALLDIR/mylar/.git
 echo "Setting up startup options"
