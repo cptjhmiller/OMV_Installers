@@ -332,18 +332,18 @@ rm -fR /var/www/openmediavault/js/omv/module/Extplorer.js > /dev/null 2>&1
 #); ?>
 }
 
-Uninstall_Gamez()
+Uninstall_MyLar()
 {
 uinst="1"
-service GameZ stop > /dev/null 2>&1
+service mylar stop > /dev/null 2>&1
 sleep 2
-rm -fR /etc/init.d/GameZ  > /dev/null 2>&1
-update-rc.d -f GameZ remove > /dev/null 2>&1
-rm -fR $INSTALLDIR/GameZ > /dev/null 2>&1
+rm -fR /etc/init.d/mylar  > /dev/null 2>&1
+update-rc.d -f mylar remove > /dev/null 2>&1
+rm -fR $INSTALLDIR/mylar > /dev/null 2>&1
 sleep 2
-rm -fR /var/run/GameZ.pid > /dev/null 2>&1
-rm -fR /var/www/openmediavault/images/GameZ.png > /dev/null 2>&1
-rm -fR /var/www/openmediavault/js/omv/module/GameZ.js > /dev/null 2>&1
+rm -fR /var/run/mylar.pid > /dev/null 2>&1
+rm -fR /var/www/openmediavault/images/mylar.png > /dev/null 2>&1
+rm -fR /var/www/openmediavault/js/omv/module/mylar.js > /dev/null 2>&1
 }
 
 getmysql()
@@ -395,8 +395,8 @@ mar="0"
 del="0"
 sub="0"
 exp="0"
-gz="0"
-ugz="0"
+ml="0"
+uml="0"
 ucpv="0"
 ucpm="0"
 ucpd="0"
@@ -435,6 +435,7 @@ echo "           6. SickBeard Torrent             15. Maraschino"
 echo "           7. HeadPhones (Master)           16. Deluge"
 echo "           8. HeadPhones (Develop)          17. Auto-Sub"
 echo "           9. Sabnzbdplus                   18. Extplorer"
+echo "                                19. MyLar
 echo ""
 echo "                                 Q. Quit"
 if [ "$INSTALLDIR" == "" ]
@@ -518,6 +519,10 @@ Uninstall_Auto-Sub;
 # Uninstall Extplorer
 -18)
 Uninstall_Extplorer;
+;;
+# Uninstall MyLar
+-19)
+Uninstall_MyLar;
 ;;
 # CouchPotato
 1)
@@ -654,8 +659,8 @@ if [ "$cpd" = "1" ]; then
 	echo "               CouchPotato Version 2 - Develop Branch";
 fi
 
-if [ "$gz" = "1" ]; then
-	echo "               Gamez";
+if [ "$ml" = "1" ]; then
+	echo "               MyLar";
 fi
 
 if [ "$hpm" = "1" ]; then
@@ -925,8 +930,8 @@ echo -ne $t%           \\r
 /usr/bin/apt-get -qyf upgrade  > /dev/null 2>&1
 t=$(($t + 5))
 echo -ne $t%           \\r
-if [ "$gz" == "1" ]; then
-	install_GZ;
+if [ "$ml" == "1" ]; then
+	install_ML;
 fi
 
 if [ "$hpm" == "1" -o "$hpd" == "1" ]; then
@@ -1133,60 +1138,60 @@ echo "Finished";
 sleep 1
 }
 
-install_GZ()
+install_ML()
 {
-service Gamez stop > /dev/null 2>&1
+service mylar stop > /dev/null 2>&1
 screen;
 cd /tmp
 echo
-echo "    *****************You selected to install Gamez***********************";
+echo "    *****************You selected to install MyLar***********************";
 echo
-echo "Downloading and installing GameZ...";
-git clone git://github.com/avjui/Gamez.git new_GZ > /dev/null
+echo "Downloading and installing MyLar...";
+git clone git://github.com/evilhero/mylar.git new_GZ > /dev/null
 ret=$?
 if ! test "$ret" -eq 0; then
-    echo >&2 "git clone GameZ failed with exit status $ret"
+    echo >&2 "git clone mylar failed with exit status $ret"
     exit 1
 fi
-if [ -d $INSTALLDIR/GameZ ]; then
-	cp -fRa /tmp/new_GZ/. $INSTALLDIR/GameZ
-	rm -fR /tmp/new_GZ
+if [ -d $INSTALLDIR/mylar ]; then
+	cp -fRa /tmp/new_ML/. $INSTALLDIR/mylar
+	rm -fR /tmp/new_ML
 else
-	mv /tmp/new_GZ $INSTALLDIR/GameZ
+	mv /tmp/new_ML $INSTALLDIR/mylar
 	echo '[global]
-	server.socket_host = "0.0.0.0"' > $INSTALLDIR/GameZ/Gamez.ini
+	server.socket_host = "0.0.0.0"' > $INSTALLDIR/mylar/Mylar.ini
 fi
-#rm -fR $INSTALLDIR/GameZ/.git
+#rm -fR $INSTALLDIR/mylar/.git
 echo "Setting up startup options"
 echo '#! /bin/sh
 
 ### BEGIN INIT INFO
-# Provides:          GameZ
+# Provides:          mylar
 # Required-Start:    $all
 # Required-Stop:     $all
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: starts instance of GameZ
-# Description:       starts instance of GameZ using start-stop-daemon
+# Short-Description: starts instance of mylar
+# Description:       starts instance of mylar using start-stop-daemon
 ### END INIT INFO
 
 ############### EDIT ME ##################
 # startup args
-DAEMON_OPTS="Gamez.py -d --nolaunch"
+DAEMON_OPTS="Mylar.py -q"
 
 # script name
-NAME=GameZ
+NAME=mylar
 
 # app name
-DESC=GameZ
+DESC=mylar
 
 # user
 RUN_AS='${mainuser}'
 # path to app
-APP_PATH='${INSTALLDIR}'/GameZ
+APP_PATH='${INSTALLDIR}'/mylar
 # path to python bin
 DAEMON='${py}'
-PID_FILE=/var/run/GameZ.pid
+PID_FILE=/var/run/mylar.pid
 
 ############### END EDIT ME ##################
 
@@ -1217,18 +1222,18 @@ case "$1" in
         ;;
 esac
 
-exit 0' > /etc/init.d/GameZ
-chmod 755 /etc/init.d/GameZ > /dev/null 2>&1
-update-rc.d GameZ defaults > /dev/null 2>&1
-chmod -R a+x $INSTALLDIR/GameZ > /dev/null 2>&1
-chown -hR $mainuser:$maingroup $INSTALLDIR/GameZ > /dev/null 2>&1
-service GameZ start > /dev/null 2>&1
+exit 0' > /etc/init.d/mylar
+chmod 755 /etc/init.d/mylar > /dev/null 2>&1
+update-rc.d mylar defaults > /dev/null 2>&1
+chmod -R a+x $INSTALLDIR/mylar > /dev/null 2>&1
+chown -hR $mainuser:$maingroup $INSTALLDIR/mylar > /dev/null 2>&1
+service mylar start > /dev/null 2>&1
 sleep 5
-service GameZ stop > /dev/null 2>&1
-chmod -R a+x $INSTALLDIR/GameZ > /dev/null 2>&1
-service GameZ start > /dev/null 2>&1
-service="GameZ"
-address="http://$ip:8085"
+service mylar stop > /dev/null 2>&1
+chmod -R a+x $INSTALLDIR/mylar > /dev/null 2>&1
+service mylar start > /dev/null 2>&1
+service="mylar"
+address="http://$ip:8090"
 panel;
 echo "";
 echo "Finished";
@@ -3327,7 +3332,7 @@ echo "";
 
 if [ "$gz" == "1" ]; then
 	echo "";
-	echo "    	GameZ 	      ---     http://$ip:8085";
+	echo "    	MyLar 	      ---     http://$ip:8090";
 fi
 
 if [ "$hpm" == "1" -o "$hpd" == "1" ]; then
