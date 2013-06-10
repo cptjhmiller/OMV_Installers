@@ -60,7 +60,7 @@ while [[ "$selected" -eq 0 ]] ; do
 	echo "the same folder you installed to.";
 	count=-1 && echo "Current Selected Folder is: $(pwd)" && echo ""
 	# Listing content of directory in the GUI
-	for item in $(echo -e "$(pwd)\n..\n$(find . -maxdepth 1 -type d -name [^\.]\* | sed 's:^\./::')"); do
+	for item in $(echo -e "$(pwd)\n..\n$(find -L -maxdepth 1 -type d -name [^\.]\* | sed 's:^\./::')"); do
 		count=$(( $count + 1 )); var_name="sel$count"; var_val="$item"; eval ${var_name}=`echo -e \""${var_val}"\"`; echo "$count - $item"
 	done
 	echo "" && echo "Type the ID of the Destination folder or 0 to select current folder:"
