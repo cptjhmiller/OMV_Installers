@@ -2987,7 +2987,7 @@ fi
 if [ ! -e /var/subsonic ]; then
 	echo "SubSonic is not installed";
 	sleep 5
-	exit 1
+	mc="0"
 else
 	wget http://dilerium.se/musiccabinet/subsonic-installer-standalone.zip
 	unzip subsonic-installer-standalone.zip
