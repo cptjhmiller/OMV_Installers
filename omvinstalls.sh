@@ -2987,7 +2987,7 @@ fi
 if [ ! -e /var/subsonic ]; then
 	echo "SubSonic is not installed";
 	sleep 5
-	mc="0"
+	mc="2"
 else
 	wget http://dilerium.se/musiccabinet/subsonic-installer-standalone.zip
 	unzip subsonic-installer-standalone.zip
@@ -3435,8 +3435,13 @@ if [ "$sub" == "1" -a "$mc" != "1" ]; then
 	echo "    	SubSonic      ---     http://$ip:4040";
 fi
 
-if [ "$mc" == "1" ]; then
-	echo "    	MusicCabinet  ---     http://$ip:4040";
+if [ "$mc" != "2" ]; then
+	if [ "$mc" == "1" ]; then
+		echo "    	MusicCabinet  ---     http://$ip:4040";
+	fi
+else
+	echo "    	MusicCabinet  ---     NOT INSTALLED";
+	echo "    	     INSTALL SUBSONIC FIRST";
 fi
 
 if [ "$cpv" == "1" ]; then
