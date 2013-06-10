@@ -2991,19 +2991,19 @@ if [ ! -e /var/subsonic ]; then
 	mc="2"
 else
 	wget http://dilerium.se/musiccabinet/subsonic-installer-standalone.zip
-	unzip subsonic-installer-standalone.zip
+	unzip subsonic-installer-standalone.zip > /dev/null 2>&1
 	rm /usr/share/subsonic/*
-	cp subsonic-installer-standalone/subsonic.sh /usr/share/subsonic
-	cp subsonic-installer-standalone/subsonic-booter-jar-with-dependencies.jar /usr/share/subsonic
-	cp subsonic-installer-standalone/subsonic.war /usr/share/subsonic
+	cp -Ra subsonic-installer-standalone/subsonic.sh /usr/share/subsonic
+	cp -Ra subsonic-installer-standalone/subsonic-booter-jar-with-dependencies.jar /usr/share/subsonic
+	cp -Ra subsonic-installer-standalone/subsonic.war /usr/share/subsonic
 	chmod 777 -R /usr/share/subsonic
 	wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | \
 		sudo apt-key add -
-	sudo apt-get update
+	sudo apt-get update -Ra 
 	#apt-get install postgresql-9.2 #
-	apt-get install postgresql-contrib-9.2 #Try this 1 next only
-	sudo -u postgres psql -c"ALTER user postgres WITH PASSWORD '1234'"
-	sudo service postgresql restart
+	apt-get -qy install postgresql-contrib-9.2 #Try this 1 next only
+	sudo -u postgres psql -c"ALTER user postgres WITH PASSWORD '1234'" > /dev/null 2>&1
+	sudo service postgresql restart > /dev/null 2>&1
 	echo 'MusicCabinetJDBCPassword=31323334' > /var/subsonic/subsonic.properties
 	if [ -e /var/subsonic/db ]; then
 		rm -R /var/subsonic/db
@@ -3014,8 +3014,8 @@ else
 	panel;
 	rm -fR /var/www/openmediavault/images/SubSonic.png > /dev/null 2>&1
 	rm -fR /var/www/openmediavault/js/omv/module/SubSonic.js > /dev/null 2>&1
-	rm /tmp/subsonic-installer-standalone.zip
-	rm -R /tmp/subsonic-installer-standalone
+	rm /tmp/subsonic-installer-standalone.zip > /dev/null 2>&1
+	rm -R /tmp/subsonic-installer-standalone > /dev/null 2>&1
 fi
 }
 
