@@ -3014,6 +3014,8 @@ else
 	panel;
 	rm -fR /var/www/openmediavault/images/SubSonic.png > /dev/null 2>&1
 	rm -fR /var/www/openmediavault/js/omv/module/SubSonic.js > /dev/null 2>&1
+	rm /tmp/subsonic-installer-standalone.zip
+	rm -R /tmp/subsonic-installer-standalone
 fi
 }
 
