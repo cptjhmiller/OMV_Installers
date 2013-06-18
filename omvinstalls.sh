@@ -33,8 +33,32 @@ mainuser="root"
 maingroup="root"
 #/usr/local/bin/python2.7
 py="/usr/bin/python"
-ip=`ifconfig | grep "inet addr:" | head -n 1  | cut -d':' -f2 | cut -d' ' -f1`;
+C_FILE=/etc/millers.cfg
+PREFIX=MILLERSCONFIG
+if [ ! -e $C_FILE ]; then
+        IP=`ifconfig | grep "inet addr:" | head -n 1  | cut -d':' -f2 | cut -d' ' -f1`
 
+        echo 'MILLERSCONFIG1=/
+MILLERSCONFIG2='${IP}'
+MILLERSCONFIG3=n' > $C_FILE
+fi
+
+save_variables()
+{
+    set | grep ^$PREFIX
+}
+
+show_variables()
+{
+    save_variables | while read line; do
+      echo $1 $line
+    done
+}
+
+
+. $C_FILE
+ip=$MILLERSCONFIG2
+INSTALLDIR=$MILLERSCONFIG1
 screen()
 {
 clear;
@@ -47,7 +71,6 @@ echo "";
 changelocation()
 {
 cd /
-INSTALLDIR=""
 WHERE=""
 selected=0
 echo "";
@@ -85,6 +108,9 @@ else
 	echo "You have chosen to install MOST apps to $INSTALLDIR";
 fi
 if QUESTION; then
+	. $C_FILE
+	MILLERSCONFIG1=$INSTALLDIR
+	save_variables > $C_FILE
 	menu;
 else
 	changelocation;
@@ -107,6 +133,10 @@ echo
 echo "Please enter the correct server address below.";
 echo "You should only enter a valid host name or IP address as there is no error checking.";
 read -p "New IP/Host name: " ip
+	. $C_FILE
+
+	MILLERSCONFIG2=$ip
+	save_variables > $C_FILE
 menu;
 }
 
@@ -854,121 +884,124 @@ fi
 
 installs()
 {
-screen;
-echo
-echo "    ***********************Installing prerequisites**********************";
-echo
-echo "    ****************Installing openmediavault-omvpluginsorg**************";
-echo
-echo "    ***********************and updating your sources*********************";
-echo
-echo "    ***********************Please wait a few moments*********************";
-echo
-source1="deb http://http.us.debian.org/debian/ squeeze main contrib non-free";
-source2="deb-src http://http.us.debian.org/debian/ squeeze main contrib non-free";
-#source3="deb http://www.deb-multimedia.org squeeze main non-free";
-#source4="deb-src http://www.deb-multimedia.org squeeze main";
-source3="deb http://debian.linuxmint.com/latest/multimedia testing main non-free";
-echo -ne 0%         \\r
-if [ ! -e /etc/apt/sources.list.d/openmediavault-millers.list ]
-then
-echo '#######Millers - Sources list#######' > /etc/apt/sources.list.d/openmediavault-millers.list
-fi
-echo -ne 5%         \\r
-line=$(grep "$source1" /etc/apt/sources.list.d/openmediavault-millers.list)
-if [ $? == 1 ]
-    then
-    echo $source1 >> /etc/apt/sources.list.d/openmediavault-millers.list
-fi
-echo -ne 10%         \\r
-line=$(grep "$source2" /etc/apt/sources.list.d/openmediavault-millers.list)
-if [ $? == 1 ]
-    then
-    echo $source2 >> /etc/apt/sources.list.d/openmediavault-millers.list
-fi
-echo -ne 15%         \\r
-line=$(grep "$source3" /etc/apt/sources.list.d/openmediavault-millers.list)
-if [ $? == 1 ]
-    then
-    echo $source3 >> /etc/apt/sources.list.d/openmediavault-millers.list
-fi
-echo -ne 20%         \\r
-#line=$(grep "$source4" /etc/apt/sources.list.d/openmediavault-millers.list)
-#if [ $? == 1 ]
-#    then
-#    echo $source4 >> /etc/apt/sources.list.d/openmediavault-millers.list
-#fi
-cd /tmp
-/usr/bin/apt-get -qy update > /dev/null 2>&1 #2>&1
-/usr/bin/apt-get -qy upgrade  > /dev/null 2>&1 #2>&1
-if [ ! -d /usr/share/keyrings ]; then
-	#Add Key
-	/usr/bin/apt-get -qy --force-yes install debian-keyring > /dev/null
-	gpg --keyring /usr/share/keyrings/debian-keyring.gpg -a --export 07DC563D1F41B907 |apt-key add - > /dev/null 2>&1 #2>&1
-	#May delete this
-fi
-apt-get -qy --force-yes install deb-multimedia-keyring > /dev/null
-#Get OMV version to install correct plugin.
-if [ ! -e /etc/apt/preferences.d/99omv-plugins-org ]; then
-	OMV_V=`expr substr "$(cat /etc/issue)" 18 1`
-	if [ "$OMV_V" == "2" ]; then
-		echo -ne 22%           \\r
-		wget http://packages.omv-plugins.org/pool/main/o/openmediavault-omvpluginsorg/openmediavault-omvpluginsorg_0.2.3_all.deb > /dev/null 2>&1
-		echo -ne 24%           \\r
-		dpkg -i openmediavault-omvpluginsorg_0.2.3_all.deb > /dev/null 2>&1
-		rm openmediavault-omvpluginsorg_0.2.3_all.deb > /dev/null 2>&1
-		echo -ne 26%           \\r
-	elif [ "$OMV_V" == "O" ]; then
-		echo -ne 22%           \\r
-		wget http://packages.omv-plugins.org/pool/main/o/openmediavault-omvpluginsorg/openmediavault-omvpluginsorg_0.3.5~1.gbp97ef9e_all.deb > /dev/null 2>&1
-		echo -ne 24%           \\r
-		dpkg -i openmediavault-omvpluginsorg_0.3.5~1.gbp97ef9e_all.deb > /dev/null 2>&1
-		rm openmediavault-omvpluginsorg_0.3.5~1.gbp97ef9e_all.deb > /dev/null 2>&1
-		echo -ne 26%           \\r
-	elif [ "$OMV_V" == "4" ]; then
-		echo -ne 22%           \\r
-		wget http://packages.omv-plugins.org/pool/main/o/openmediavault-omvpluginsorg/openmediavault-omvpluginsorg_0.4.2-10~1.gbpefc0a1_all.deb > /dev/null 2>&1
-		echo -ne 24%           \\r
-		dpkg -i openmediavault-omvpluginsorg_0.4.2-10~1.gbpefc0a1_all.deb > /dev/null 2>&1
-		rm openmediavault-omvpluginsorg_0.4.2-10~1.gbpefc0a1_all.deb > /dev/null 2>&1
-		echo -ne 26%           \\r
-	elif [ "$OMV_V" == "5" ]; then
-		echo -ne 26%           \\r
+. $C_FILE
+if [ "$MILLERSCONFIG3" == "n" ]; then
+	screen;
+	echo
+	echo "    ***********************Installing prerequisites**********************";
+	echo
+	echo "    ****************Installing openmediavault-omvpluginsorg**************";
+	echo
+	echo "    ***********************and updating your sources*********************";
+	echo
+	echo "    ***********************Please wait a few moments*********************";
+	echo
+	source1="deb http://http.us.debian.org/debian/ squeeze main contrib non-free";
+	source2="deb-src http://http.us.debian.org/debian/ squeeze main contrib non-free";
+	#source3="deb http://www.deb-multimedia.org squeeze main non-free";
+	#source4="deb-src http://www.deb-multimedia.org squeeze main";
+	source3="deb http://debian.linuxmint.com/latest/multimedia testing main non-free";
+	echo -ne 0%         \\r
+	if [ ! -e /etc/apt/sources.list.d/openmediavault-millers.list ]; then
+		echo '#######Millers - Sources list#######' > /etc/apt/sources.list.d/openmediavault-millers.list
 	fi
-fi
-echo -ne 26%           \\r
-t=26
-appinstall="lsof inotify-tools subversion at curl python par2 unzip unrar git git-core aptitude python-support python-software-properties python-openssl python-yenc python-cheetah python-beautifulsoup python-dbus python-html5lib  python-lxml python-configobj python-feedparser screen"
-#items=( $appinstall )
-for item in ${appinstall[@]}; do
+	echo -ne 5%         \\r
+	line=$(grep "$source1" /etc/apt/sources.list.d/openmediavault-millers.list)
+	if [ $? == 1 ]; then
+		echo $source1 >> /etc/apt/sources.list.d/openmediavault-millers.list
+	fi
+	echo -ne 10%         \\r
+	line=$(grep "$source2" /etc/apt/sources.list.d/openmediavault-millers.list)
+	if [ $? == 1 ]; then
+		echo $source2 >> /etc/apt/sources.list.d/openmediavault-millers.list
+	fi
+	echo -ne 15%         \\r
+	line=$(grep "$source3" /etc/apt/sources.list.d/openmediavault-millers.list)
+	if [ $? == 1 ]; then
+		echo $source3 >> /etc/apt/sources.list.d/openmediavault-millers.list
+	fi
+	echo -ne 20%         \\r
+	#line=$(grep "$source4" /etc/apt/sources.list.d/openmediavault-millers.list)
+	#if [ $? == 1 ]
+	#    then
+	#    echo $source4 >> /etc/apt/sources.list.d/openmediavault-millers.list
+	#fi
+	cd /tmp
+	/usr/bin/apt-get -qy update > /dev/null 2>&1 #2>&1
+	/usr/bin/apt-get -qy upgrade  > /dev/null 2>&1 #2>&1
+	if [ ! -d /usr/share/keyrings ]; then
+		#Add Key
+		/usr/bin/apt-get -qy --force-yes install debian-keyring > /dev/null
+		gpg --keyring /usr/share/keyrings/debian-keyring.gpg -a --export 07DC563D1F41B907 |apt-key add - > /dev/null 2>&1 #2>&1
+		#May delete this
+	fi
+	apt-get -qy --force-yes install deb-multimedia-keyring > /dev/null
+	#Get OMV version to install correct plugin.
+	if [ ! -e /etc/apt/preferences.d/99omv-plugins-org ]; then
+		OMV_V=`expr substr "$(cat /etc/issue)" 18 1`
+		if [ "$OMV_V" == "2" ]; then
+			echo -ne 22%           \\r
+			wget http://packages.omv-plugins.org/pool/main/o/openmediavault-omvpluginsorg/openmediavault-omvpluginsorg_0.2.3_all.deb > /dev/null 2>&1
+			echo -ne 24%           \\r
+			dpkg -i openmediavault-omvpluginsorg_0.2.3_all.deb > /dev/null 2>&1
+			rm openmediavault-omvpluginsorg_0.2.3_all.deb > /dev/null 2>&1
+			echo -ne 26%           \\r
+		elif [ "$OMV_V" == "O" ]; then
+			echo -ne 22%           \\r
+			wget http://packages.omv-plugins.org/pool/main/o/openmediavault-omvpluginsorg/openmediavault-omvpluginsorg_0.3.5~1.gbp97ef9e_all.deb > /dev/null 2>&1
+			echo -ne 24%           \\r
+			dpkg -i openmediavault-omvpluginsorg_0.3.5~1.gbp97ef9e_all.deb > /dev/null 2>&1
+			rm openmediavault-omvpluginsorg_0.3.5~1.gbp97ef9e_all.deb > /dev/null 2>&1
+			echo -ne 26%           \\r
+		elif [ "$OMV_V" == "4" ]; then
+			echo -ne 22%           \\r
+			wget http://packages.omv-plugins.org/pool/main/o/openmediavault-omvpluginsorg/openmediavault-omvpluginsorg_0.4.2-10~1.gbpefc0a1_all.deb > /dev/null 2>&1
+			echo -ne 24%           \\r
+			dpkg -i openmediavault-omvpluginsorg_0.4.2-10~1.gbpefc0a1_all.deb > /dev/null 2>&1
+			rm openmediavault-omvpluginsorg_0.4.2-10~1.gbpefc0a1_all.deb > /dev/null 2>&1
+			echo -ne 26%           \\r
+		elif [ "$OMV_V" == "5" ]; then
+			echo -ne 26%           \\r
+		fi
+	fi
+	echo -ne 26%           \\r
+	t=26
+	appinstall="lsof inotify-tools subversion at curl python par2 unzip unrar git git-core aptitude python-support python-software-properties python-openssl python-yenc python-cheetah python-beautifulsoup python-dbus python-html5lib  python-lxml python-configobj python-feedparser screen"
+	#items=( $appinstall )
+	for item in ${appinstall[@]}; do
+		echo -ne $t%           \\r
+		if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
+			/usr/bin/apt-get -qy install "$item" > /dev/null 2>&1
+			t=$(($t + 2))
+		else
+			t=$(($t + 2))
+		fi
+	done
+	if [ ! -e /var/lib/dpkg/info/unrar.list ]; then
+		RUNNING=`expr "$(uname -m)"`
+		if [ "$RUNNING" == "x86_64" ]; then
+			cd /tmp > /dev/null 2>&1
+			wget http://http.us.debian.org/debian/pool/non-free/u/unrar-nonfree/unrar_4.2.4-0.3_amd64.deb > /dev/null 2>&1
+			dpkg -i unrar_4.2.4-0.3_amd64.deb > /dev/null 2>&1
+			rm unrar_4.2.4-0.3_amd64.deb > /dev/null 2>&1
+		elif [ "$RUNNING" == "i686" ]; then
+			cd /tmp > /dev/null 2>&1
+			wget http://http.us.debian.org/debian/pool/non-free/u/unrar-nonfree/unrar_4.2.4-0.3_i386.deb > /dev/null 2>&1
+			dpkg -i unrar_4.2.4-0.3_i386.deb > /dev/null 2>&1
+			rm unrar_4.2.4-0.3_i386.deb > /dev/null 2>&1
+		fi
+	fi
+	/usr/bin/apt-get -qyf install  > /dev/null 2>&1
+	t=$(($t + 5))
 	echo -ne $t%           \\r
-	if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
-		/usr/bin/apt-get -qy install "$item" > /dev/null 2>&1
-		t=$(($t + 2))
-	else
-		t=$(($t + 2))
-	fi
-done
-if [ ! -e /var/lib/dpkg/info/unrar.list ]; then
-	RUNNING=`expr "$(uname -m)"`
-	if [ "$RUNNING" == "x86_64" ]; then
-		cd /tmp > /dev/null 2>&1
-		wget http://http.us.debian.org/debian/pool/non-free/u/unrar-nonfree/unrar_4.2.4-0.3_amd64.deb > /dev/null 2>&1
-		dpkg -i unrar_4.2.4-0.3_amd64.deb > /dev/null 2>&1
-		rm unrar_4.2.4-0.3_amd64.deb > /dev/null 2>&1
-	elif [ "$RUNNING" == "i686" ]; then
-		cd /tmp > /dev/null 2>&1
-		wget http://http.us.debian.org/debian/pool/non-free/u/unrar-nonfree/unrar_4.2.4-0.3_i386.deb > /dev/null 2>&1
-		dpkg -i unrar_4.2.4-0.3_i386.deb > /dev/null 2>&1
-		rm unrar_4.2.4-0.3_i386.deb > /dev/null 2>&1
-	fi
+	/usr/bin/apt-get -qyf upgrade  > /dev/null 2>&1
+	t=$(($t + 5))
+	echo -ne $t%           \\r
+	. $C_FILE
+
+	MILLERSCONFIG3=y
+	save_variables > $C_FILE
 fi
-/usr/bin/apt-get -qyf install  > /dev/null 2>&1
-t=$(($t + 5))
-echo -ne $t%           \\r
-/usr/bin/apt-get -qyf upgrade  > /dev/null 2>&1
-t=$(($t + 5))
-echo -ne $t%           \\r
 if [ "$ml" == "1" ]; then
 	install_ML;
 fi
