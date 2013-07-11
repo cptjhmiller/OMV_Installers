@@ -224,7 +224,7 @@ service subsonic stop > /dev/null 2>&1
 sleep 2
 update-rc.d -f subsonic remove > /dev/null 2>&1
 rm -fR /etc/init.d/subsonic > /dev/null 2>&1
-/usr/bin/apt-get -qy remove subsonic > /dev/null 2>&1
+/usr/bin/apt-get -qq remove subsonic
 rm -fR /etc/default/subsonic > /dev/null 2>&1
 rm -fR /var/subsonic > /dev/null 2>&1
 rm -fR /var/lib/dpkg/info/subsonic.list > /dev/null 2>&1
@@ -254,7 +254,7 @@ uinst="1"
 echo "uninstalling................PyLoad"
 service /root/.pyload stop > /dev/null 2>&1
 rm -fR /usr/share/pyload > /dev/null 2>&1
-/usr/bin/apt-get -qy remove pyload-cli > /dev/null 2>&1
+/usr/bin/apt-get -qq remove pyload-cli
 update-rc.d -f pyload remove > /dev/null 2>&1
 sleep 2
 rm -fR /etc/init.d/pyload > /dev/null 2>&1
@@ -339,7 +339,7 @@ rm -fR /etc/init.d/auto-sub > /dev/null 2>&1
 rm -fR $INSTALLDIR/auto-sub > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/Auto-Sub.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/Auto-Sub.js > /dev/null 2>&1
-/usr/bin/apt-get -qy purge mercurial > /dev/null 2>&1
+/usr/bin/apt-get -qq purge mercurial
 }
 
 Uninstall_Extplorer()
@@ -347,7 +347,7 @@ Uninstall_Extplorer()
 uinst="1"
 echo "uninstalling................Extplorer"
 rm -fR /var/www/openmediavault/extplorer > /dev/null 2>&1
-/usr/bin/apt-get -qy extplorer > /dev/null 2>&1
+/usr/bin/apt-get -qq remove extplorer
 rm -R /etc/extplorer > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/Extplorer.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/Extplorer.js > /dev/null 2>&1
@@ -385,14 +385,14 @@ service subsonic stop > /dev/null 2>&1
 sleep 2
 update-rc.d -f subsonic remove > /dev/null 2>&1
 rm -fR /etc/init.d/subsonic > /dev/null 2>&1
-/usr/bin/apt-get -qy remove subsonic > /dev/null 2>&1
+/usr/bin/apt-get -qq remove subsonic > /dev/null 2>&1
 rm -fR /etc/default/subsonic > /dev/null 2>&1
 rm -fR /var/subsonic > /dev/null 2>&1
 rm -fR /var/lib/dpkg/info/subsonic.list > /dev/null 2>&1
 rm -fR /var/lib/dpkg/info/subsonic.postrm > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/MusicCabinet.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/MusicCabinet.js > /dev/null 2>&1
-apt-get -y purge postgresql-contrib-9.2 postgresql-9.2 pgdg-keyring postgresql-common postgresql-client-9.2 postgresql-client-common
+/usr/bin/apt-get -y purge postgresql-contrib-9.2 postgresql-9.2 pgdg-keyring postgresql-common postgresql-client-9.2 postgresql-client-common
 }
 
 getmysql()
@@ -423,8 +423,8 @@ fi
 echo "Just checking for any new updates for installed files"
 echo "If this is a new install it will take some time"
 echo "Please wait..."
-/usr/bin/apt-get -qy update > /dev/null 2>&1
-/usr/bin/apt-get -qy upgrade > /dev/null 2>&1
+apt-get --quiet --quiet update
+/usr/bin/apt-get upgrade
 SELECT=""
 cpv="0"
 cpm="0"
@@ -898,9 +898,9 @@ if [ "$MILLERSCONFIG3" == "n" ]; then
 	echo
 	source1="deb http://http.us.debian.org/debian/ squeeze main contrib non-free";
 	source2="deb-src http://http.us.debian.org/debian/ squeeze main contrib non-free";
-	#source3="deb http://www.deb-multimedia.org squeeze main non-free";
-	#source4="deb-src http://www.deb-multimedia.org squeeze main";
 	source3="deb http://debian.linuxmint.com/latest/multimedia testing main non-free";
+	source4="deb http://packages.dotdeb.org stable all";
+	source5="deb-src http://packages.dotdeb.org stable all";
 	echo -ne 0%         \\r
 	if [ ! -e /etc/apt/sources.list.d/openmediavault-millers.list ]; then
 		echo '#######Millers - Sources list#######' > /etc/apt/sources.list.d/openmediavault-millers.list
@@ -921,21 +921,30 @@ if [ "$MILLERSCONFIG3" == "n" ]; then
 		echo $source3 >> /etc/apt/sources.list.d/openmediavault-millers.list
 	fi
 	echo -ne 20%         \\r
+	line=$(grep "$source4" /etc/apt/sources.list.d/openmediavault-millers.list)
+	if [ $? == 1 ]; then
+		echo $source4 >> /etc/apt/sources.list.d/openmediavault-millers.list
+	fi
+	echo -ne 20%         \\r
+	line=$(grep "$source5" /etc/apt/sources.list.d/openmediavault-millers.list)
+	if [ $? == 1 ]; then
+		echo $source5 >> /etc/apt/sources.list.d/openmediavault-millers.list
+	fi
+	echo -ne 20%         \\r
 	#line=$(grep "$source4" /etc/apt/sources.list.d/openmediavault-millers.list)
 	#if [ $? == 1 ]
 	#    then
 	#    echo $source4 >> /etc/apt/sources.list.d/openmediavault-millers.list
 	#fi
 	cd /tmp
-	/usr/bin/apt-get -qy update > /dev/null 2>&1 #2>&1
-	/usr/bin/apt-get -qy upgrade  > /dev/null 2>&1 #2>&1
-	if [ ! -d /usr/share/keyrings ]; then
-		#Add Key
-		/usr/bin/apt-get -qy --force-yes install debian-keyring > /dev/null
-		gpg --keyring /usr/share/keyrings/debian-keyring.gpg -a --export 07DC563D1F41B907 |apt-key add - > /dev/null 2>&1 #2>&1
-		#May delete this
-	fi
-	apt-get -qy --force-yes install deb-multimedia-keyring > /dev/null
+	/usr/bin/apt-get --quiet --quiet update > /dev/null 2>&1
+	/usr/bin/apt-get --quiet --quiet upgrade > /dev/null 2>&1
+	#Add Key
+	/usr/bin/apt-get -qq install debian-keyring > /dev/null 2>&1
+	gpg --keyring /usr/share/keyrings/debian-keyring.gpg -a --export 07DC563D1F41B907 |apt-key add - > /dev/null 2>&1
+	apt-get update > /dev/null 2>&1
+	wget http://www.dotdeb.org/dotdeb.gpg > /dev/null 2>&1
+	cat dotdeb.gpg | sudo apt-key add - > /dev/null 2>&1
 	#Get OMV version to install correct plugin.
 	if [ ! -e /etc/apt/preferences.d/99omv-plugins-org ]; then
 		OMV_V=`expr substr "$(cat /etc/issue)" 18 1`
@@ -971,7 +980,7 @@ if [ "$MILLERSCONFIG3" == "n" ]; then
 	for item in ${appinstall[@]}; do
 		echo -ne $t%           \\r
 		if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
-			/usr/bin/apt-get -qy install "$item" > /dev/null 2>&1
+			/usr/bin/apt-get -qq install "$item" > /dev/null 2>&1
 			t=$(($t + 2))
 		else
 			t=$(($t + 2))
@@ -1612,7 +1621,7 @@ if [ $? == 1 ]; then
     echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" >> /etc/apt/sources.list.d/openmediavault-millers.list
 fi
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886 > /dev/null 2>&1
-/usr/bin/apt-get -qy update > /dev/null 2>&1
+/usr/bin/apt-get --quiet --quiet update
 /usr/bin/apt-get -qy install oracle-java7-installer
 #lame flac faad vorbis-tools ffmpeg > /dev/null 2>&1
 screen;
@@ -1652,7 +1661,7 @@ appinstall="php-auth-http php-mail-mime libjs-extjs php-compat php-mime-type php
 for item in ${appinstall[@]}; do
 	echo -ne $t%           \\r
 	if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
-		/usr/bin/apt-get -qy install "$item" > /dev/null 2>&1
+		/usr/bin/apt-get -qq install  "$item"
 		t=$(($t + 7))
 	else
 		t=$(($t + 7))
@@ -2336,7 +2345,7 @@ appinstall="tesseract-orc python-imaging python-openssl"
 for item in ${appinstall[@]}; do
 	echo -ne $t%           \\r
 	if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
-		/usr/bin/apt-get -qy install "$item" > /dev/null 2>&1
+		/usr/bin/apt-get -qq install  "$item"
 		t=$(($t + 25))
 	else
 		t=$(($t + 25))
@@ -2522,7 +2531,7 @@ appinstall="g++ make gettext subversion python-all-dev python-all python-twisted
 for item in ${appinstall[@]}; do
 	echo -ne $t%           \\r
 	if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
-		/usr/bin/apt-get -qy install "$item" > /dev/null 2>&1
+		/usr/bin/apt-get -qq install  "$item"
 		t=$(($t + 4))
 	else
 		t=$(($t + 4))
@@ -2892,13 +2901,19 @@ else
 	echo "please wait...";
 	NEWZNABPT;
 	cd /var/www
-	git clone git://github.com/nZEDb/nZEDb.git  > /dev/null
+	git clone https://github.com/nZEDb/nZEDb.git /var/www/nZEDb
 	ret=$?
 	if ! test "$ret" -eq 0; then
 		echo >&2 "git clone nZEDb failed with exit status $ret"
 		exit 1
 	fi
-	chown openmediavault:openmediavault -R /var/www/nZEDb/www > /dev/null 2>&1
+	chmod -R 775 /var/www/nZEDb/www/lib/smarty/templates_c
+	chmod -R 775 /var/www/nZEDb/www/covers
+	chmod -R 775 /var/www/nZEDb/nzbfiles
+	chmod 775 /var/www/nZEDb/www
+	chmod 775 /var/www/nZEDb/www/install
+	chown -R openmediavault:openmediavault /var/www
+	easy_install cymysql > /dev/null 2>&1
 	setup_NEWZNAB;
 	screen;
 	cd /tmp
@@ -2941,7 +2956,7 @@ echo "                        Enter the password when asked                    "
 
 svn co svn://svn.newznab.com/nn/branches/nnplus /var/www/newznab --username=svnplus
 
-chown openmediavault:openmediavault /var/www/newznab/www -R
+chown -R openmediavault:openmediavault /var/www/newznab/www
 setup_NEWZNAB;
 if ! grep -q "screen -dmS newznab \/var\/www\/newznab\/misc\/update_scripts\/nix_scripts\/newznab_screen.sh" /etc/rc.local; then
 	sed -i '0,/^[ \t]*exit[ \t]\+0/s//screen -dmS newznab \/var\/www\/newznab\/misc\/update_scripts\/nix_scripts\/newznab_screen.sh\n&/' /etc/rc.local
@@ -3037,9 +3052,9 @@ else
 	chmod 777 -R /usr/share/subsonic
 	wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | \
 		sudo apt-key add -
-	sudo apt-get update > /dev/null 2>&1
+	/usr/bin/apt-get --quiet --quiet update
 	#apt-get install postgresql-9.2 #
-	apt-get -y --force-yes install postgresql-contrib-9.2
+	/usr/bin/apt-get -qq install  postgresql-contrib-9.2
 	sudo -u postgres psql -c"ALTER user postgres WITH PASSWORD '1234'"
 	sudo service postgresql restart > /dev/null 2>&1
 	echo 'MusicCabinetJDBCPassword=31323334' > /var/subsonic/subsonic.properties
@@ -3097,14 +3112,14 @@ if QUESTION; then
 	appinstall="ffmpeg x264 libav-tools libvpx-dev libx264-dev yasm"
 	for item in ${appinstall[@]}; do
 		echo -ne $t%           \\r
-		/usr/bin/apt-get -qy remove "$item" > /dev/null 2>&1
+		/usr/bin/apt-get -qq remove "$item" > /dev/null 2>&1
 		t=$(($t + 3))
 	done
 	appinstall="nasm gettext automake autoconf build-essential checkinstall git libfaac-dev libass-dev libgpac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev librtmp-dev libsdl1.2-dev libtheora-dev libtool libvorbis-dev pkg-config texi2html yasm zlib1g-dev libjack-jackd2-dev libva-dev libvdpau-dev libx11-dev libxfixes-dev libdirac-dev libxvidcore-dev mediainfo"
 	for item in ${appinstall[@]}; do
 		echo -ne $t%           \\r
 			if [ ! -f /var/lib/dpkg/info/"$item".list ]; then
-				/usr/bin/apt-get -qy install "$item" > /dev/null 2>&1
+				/usr/bin/apt-get -qq install  "$item" > /dev/null 2>&1
 				t=$(($t + 3))
 			else
 				t=$(($t + 3))
@@ -3201,28 +3216,28 @@ echo
 #export DEBIAN_FRONTEND=noninteractive
 t=0
 echo -ne $t%           \\r
-/usr/bin/apt-get -qy update  > /dev/null 2>&1
-/usr/bin/apt-get -qy upgrade > /dev/null 2>&1
+/usr/bin/apt-get --quiet --quiet update
+/usr/bin/apt-get --quiet --quiet upgrade
 
 
 echo mysql-server mysql-server/root_password password $mypass | sudo debconf-set-selections
 echo mysql-server mysql-server/root_password_again password $mypass | sudo debconf-set-selections
-appinstall="openmediavault-mysql php-apc php5-cli php5-curl php5-gmp php5-gd php5-mcrypt php5-sqlite php-pear axel bwm-ng curl dnsutils ethtool htop iotop iperf mtr-tiny ntp psmisc rsnapshot rsync screen unrar unzip zip make g++ checkinstall libmysqlclient-dev python-mysqldb"
+appinstall="openmediavault-mysql php-apc php5-cli php5-curl php5-gmp php5-gd php5-mcrypt php5-sqlite php-pear axel bwm-ng curl dnsutils ethtool htop iotop iperf mtr-tiny ntp psmisc rsnapshot rsync screen unrar unzip zip make g++ checkinstall libmysqlclient-dev python-mysqldb mysql-server mysql-client libmysqlclient-dev python-pip python-setuptools php5-fpm php5-svn"
 for item in ${appinstall[@]}; do
 	echo -ne $t%           \\r
 		if [ ! -f /var/lib/dpkg/info/"$item".list ]; then
-			/usr/bin/apt-get -qy install "$item" > /dev/null 2>&1
-			t=$(($t + 3))
+			/usr/bin/apt-get -qq install  "$item"
+			t=$(($t + 2))
 		else
-			t=$(($t + 3))
+			t=$(($t + 2))
 		fi
 done
 screen;
 echo "    *************************Packages installed**************************";
 echo "    *************Installing ${INSTALLING} & compiling dependencies*************";
 
-/usr/bin/apt-get -qy update > /dev/null 2>&1
-/usr/bin/apt-get -qy upgrade > /dev/null 2>&1
+/usr/bin/apt-get --quiet --quiet update
+/usr/bin/apt-get --quiet --quiet upgrade
 if [ "$nzbf" == "1" ]; then
 	echo 'NameVirtualHost *:'${NEWZNABPORT}'
 Listen '${NEWZNABPORT}'
@@ -3374,6 +3389,22 @@ sed -i "s#;date.timezone =#date.timezone = Europe/London#g" /var/www/openmediava
 sed -i "s#max_execution_time = 30#max_execution_time = 120#g" /var/www/openmediavault/cgi/php.ini
 sed -i "s#memory_limit = 256M#memory_limit = 1024M#g" /var/www/openmediavault/cgi/php.ini
 sed -i "s#memory_limit = 128M#memory_limit = 1024M#g" /var/www/openmediavault/cgi/php.ini
+
+sed -i -e 's/max_execution_time.*$/max_execution_time = 120/' /etc/php5/fpm/php.ini
+sed -i -e 's/max_execution_time.*$/max_execution_time = 120/' /etc/php5/fpm/php.ini
+sed -i -e 's/max_execution_time.*$/max_execution_time = 120/' /etc/php5/cli/php.ini
+sed -i -e 's/max_execution_time.*$/max_execution_time = 120/' /etc/php5/apache2/php.ini
+sed -i -e 's/memory_limit.*$/memory_limit = -1/' /etc/php5/fpm/php.ini
+sed -i -e 's/memory_limit.*$/memory_limit = -1/' /etc/php5/cli/php.ini
+sed -i -e 's/memory_limit.*$/memory_limit = -1/' /etc/php5/apache2/php.ini
+sed -i -e 's/[;?]date.timezone.*$/date.timezone = America\/New_York/' /etc/php5/fpm/php.ini
+sed -i -e 's/[;?]date.timezone.*$/date.timezone = America\/New_York/' /etc/php5/cli/php.ini
+sed -i -e 's/[;?]date.timezone.*$/date.timezone = America\/New_York/' /etc/php5/apache2/php.ini
+
+
+
+
+
 a2dissite default > /dev/null 2>&1
 a2enmod rewrite > /dev/null 2>&1
 service apache2 restart > /dev/null 2>&1
