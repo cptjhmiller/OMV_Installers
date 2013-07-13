@@ -1,5 +1,5 @@
 #!/bin/bash
-set -u
+set -e
 clear;
 # My Junk Stuff #
 ################################################################################
@@ -31,6 +31,8 @@ clear;
 INSTALLDIR=""
 mainuser="root"
 maingroup="root"
+. /etc/default/openmediavault
+. /usr/share/openmediavault/scripts/helper-functions
 #/usr/local/bin/python2.7
 py="/usr/bin/python"
 C_FILE=/etc/millers.cfg
@@ -3282,7 +3284,7 @@ ErrorLog /openmediavault-webgui_error.log
 CustomLog /openmediavault-webgui_access.log combined
 </VirtualHost>' > /etc/apache2/sites-available/nZEDb
 	#ln -s /etc/apache2/sites-available/nZEDb /etc/apache2/sites-enabled/nZEDb
-	a2ensite nZEDb > /dev/null 2>&1
+
 	chmod 777 -R /var/www/nZEDb
 	mysql -u root -p$mypass -e "CREATE DATABASE nzedb CHARACTER SET utf8 COLLATE utf8_bin;
 CREATE USER 'nzedb'@'%' IDENTIFIED BY PASSWORD '*1866926EB89CFCFA28CCB6D28A8834777C277E57';
@@ -3385,26 +3387,34 @@ sort_buffer_size = 8M
 !includedir /etc/mysql/conf.d/" > /etc/mysql/my.cnf
 
 # Set php.ini
-sed -i "s#;date.timezone =#date.timezone = Europe/London#g" /var/www/openmediavault/cgi/php.ini
-sed -i "s#max_execution_time = 30#max_execution_time = 120#g" /var/www/openmediavault/cgi/php.ini
-sed -i "s#memory_limit = 256M#memory_limit = 1024M#g" /var/www/openmediavault/cgi/php.ini
-sed -i "s#memory_limit = 128M#memory_limit = 1024M#g" /var/www/openmediavault/cgi/php.ini
+TZ=$(echo "$(omv_config_get "//system/time/timezone")" | sed 's.\/.\\\/.g')
+if [ -f /var/www/openmediavault/cgi/php.ini ]; then
+	sed -i -e 's/.*ate.timezone = .*$/date.timezone = '$TZ'/' /var/www/openmediavault/cgi/php.ini
+	sed -i -e 's/.*emory_limit = .*$/memory_limit = -1/' /var/www/openmediavault/cgi/php.ini
+	sed -i -e 's/.*ax_execution_time = .*$/max_execution_time = 120/' /var/www/openmediavault/cgi/php.ini
+fi
 
-sed -i -e 's/max_execution_time.*$/max_execution_time = 120/' /etc/php5/fpm/php.ini
-sed -i -e 's/max_execution_time.*$/max_execution_time = 120/' /etc/php5/fpm/php.ini
-sed -i -e 's/max_execution_time.*$/max_execution_time = 120/' /etc/php5/cli/php.ini
-sed -i -e 's/max_execution_time.*$/max_execution_time = 120/' /etc/php5/apache2/php.ini
-sed -i -e 's/memory_limit.*$/memory_limit = -1/' /etc/php5/fpm/php.ini
-sed -i -e 's/memory_limit.*$/memory_limit = -1/' /etc/php5/cli/php.ini
-sed -i -e 's/memory_limit.*$/memory_limit = -1/' /etc/php5/apache2/php.ini
-sed -i -e 's/[;?]date.timezone.*$/date.timezone = America\/New_York/' /etc/php5/fpm/php.ini
-sed -i -e 's/[;?]date.timezone.*$/date.timezone = America\/New_York/' /etc/php5/cli/php.ini
-sed -i -e 's/[;?]date.timezone.*$/date.timezone = America\/New_York/' /etc/php5/apache2/php.ini
+if [ -f /etc/php5/fpm/php.ini ]; then
+	sed -i -e 's/.*ate.timezone = .*$/date.timezone = '$TZ'/' /etc/php5/fpm/php.ini
+	sed -i -e 's/.*emory_limit = .*$/memory_limit = -1/' /etc/php5/fpm/php.ini
+	sed -i -e 's/.*ax_execution_time = .*$/max_execution_time = 120/' /etc/php5/fpm/php.ini
+fi
 
+if [ -f /etc/php5/cli/php.ini ]; then
+	sed -i -e 's/.*ate.timezone = .*$/date.timezone = '$TZ'/' /etc/php5/cli/php.ini
+	sed -i -e 's/.*emory_limit = .*$/memory_limit = -1/' /etc/php5/cli/php.ini
+	sed -i -e 's/.*ax_execution_time = .*$/max_execution_time = 120/' /etc/php5/cli/php.ini
+fi
 
+if [ -f /etc/php5/cgi/php.ini ]; then
+	sed -i -e 's/.*ate.timezone = .*$/date.timezone = '$TZ'/' /etc/php5/cgi/php.ini
+	sed -i -e 's/.*emory_limit = .*$/memory_limit = -1/' /etc/php5/cgi/php.ini
+	sed -i -e 's/.*ax_execution_time = .*$/max_execution_time = 120/' /etc/php5/cgi/php.ini
+fi
 
+echo "Change Apache Security"
 
-
+a2ensite nZEDb > /dev/null 2>&1
 a2dissite default > /dev/null 2>&1
 a2enmod rewrite > /dev/null 2>&1
 service apache2 restart > /dev/null 2>&1
