@@ -901,8 +901,8 @@ if [ "$MILLERSCONFIG3" == "n" ]; then
 	source1="deb http://http.us.debian.org/debian/ squeeze main contrib non-free";
 	source2="deb-src http://http.us.debian.org/debian/ squeeze main contrib non-free";
 	source3="deb http://debian.linuxmint.com/latest/multimedia testing main non-free";
-	source4="deb http://packages.dotdeb.org stable all";
-	source5="deb-src http://packages.dotdeb.org stable all";
+	#source4="deb http://packages.dotdeb.org stable all";
+	#source5="deb-src http://packages.dotdeb.org stable all";
 	echo -ne 0%         \\r
 	if [ ! -e /etc/apt/sources.list.d/openmediavault-millers.list ]; then
 		echo '#######Millers - Sources list#######' > /etc/apt/sources.list.d/openmediavault-millers.list
@@ -923,16 +923,16 @@ if [ "$MILLERSCONFIG3" == "n" ]; then
 		echo $source3 >> /etc/apt/sources.list.d/openmediavault-millers.list
 	fi
 	echo -ne 20%         \\r
-	line=$(grep "$source4" /etc/apt/sources.list.d/openmediavault-millers.list)
-	if [ $? == 1 ]; then
-		echo $source4 >> /etc/apt/sources.list.d/openmediavault-millers.list
-	fi
-	echo -ne 20%         \\r
-	line=$(grep "$source5" /etc/apt/sources.list.d/openmediavault-millers.list)
-	if [ $? == 1 ]; then
-		echo $source5 >> /etc/apt/sources.list.d/openmediavault-millers.list
-	fi
-	echo -ne 20%         \\r
+	#line=$(grep "$source4" /etc/apt/sources.list.d/openmediavault-millers.list)
+	#if [ $? == 1 ]; then
+	#	echo $source4 >> /etc/apt/sources.list.d/openmediavault-millers.list
+	#fi
+	#echo -ne 20%         \\r
+	#line=$(grep "$source5" /etc/apt/sources.list.d/openmediavault-millers.list)
+	#if [ $? == 1 ]; then
+	#	echo $source5 >> /etc/apt/sources.list.d/openmediavault-millers.list
+	#fi
+	#echo -ne 20%         \\r
 	#line=$(grep "$source4" /etc/apt/sources.list.d/openmediavault-millers.list)
 	#if [ $? == 1 ]
 	#    then
