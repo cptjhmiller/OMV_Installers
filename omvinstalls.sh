@@ -1841,6 +1841,8 @@ address="http://$ip/bbs"
 panel;
 echo "";
 echo "Finished";
+sed -i -e 's/AllowOverride None/AllowOverride All/' /etc/apache2/openmediavault-webgui.d/default.conf > /dev/null 2>&1
+service apache2 restart > /dev/null 2>&1
 sleep 1
 }
 
