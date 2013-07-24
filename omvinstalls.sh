@@ -1814,19 +1814,19 @@ echo
 echo "    ***************You selected to install BicBucStriim******************";
 echo
 echo "Downloading and installing BicBucStriim...";
-#echo " ";
-#t=9
-#echo -ne 9%           \\r
-#appinstall="php-auth-http php-mail-mime libjs-extjs php-compat php-mime-type php-http-webdav-server libjs-yui php-auth libjs-edit-area php-services-json php-net-ftp php-mail-mimedecode php-geshi"
-#for item in ${appinstall[@]}; do
-#	echo -ne $t%           \\r
-#	if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
-#		/usr/bin/apt-get -qq install  "$item"
-#		t=$(($t + 7))
-#	else
-#		t=$(($t + 7))
-#	fi
-#done
+echo " ";
+t=9
+echo -ne 9%           \\r
+appinstall="php5-sqlite"
+for item in ${appinstall[@]}; do
+	echo -ne $t%           \\r
+	if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
+		/usr/bin/apt-get -qq install  "$item"
+		t=$(($t + 7))
+	else
+		t=$(($t + 7))
+	fi
+done
 #mkdir -p /var/www/openmediavault/bbs > /dev/null 2>&1
 cd /var/www/openmediavault > /dev/null 2>&1
 wget 'http://projekte.textmulch.de/bicbucstriim/downloads/BicBucStriim-1.1.0.zip' -O /var/www/openmediavault/BicBucStriim-1.1.0.zip > /dev/null 2>&1
@@ -1834,7 +1834,7 @@ unzip -o /var/www/openmediavault/BicBucStriim-1.1.0.zip -d /var/www/openmediavau
 mv /var/www/openmediavault/BicBucStriim-1.1.0 /var/www/openmediavault/bbs > /dev/null 2>&1
 rm -Rf /var/www/openmediavault/BicBucStriim-1.1.0.zip > /dev/null 2>&1
 chown openmediavault:openmediavault -R /var/www/openmediavault/bbs > /dev/null 2>&1
-chmod 755 -R /var/www/openmediavault/bbs > /dev/null 2>&1
+chmod -R ga+w /var/www/openmediavault/bbs > /dev/null 2>&1
 #chmod 777 -R /var/www/openmediavault/extplorer/ftp_tmp > /dev/null 2>&1
 service="BicBucStriim"
 address="http://$ip/bbs"
