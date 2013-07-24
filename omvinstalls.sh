@@ -1827,12 +1827,12 @@ echo "Downloading and installing BicBucStriim...";
 #		t=$(($t + 7))
 #	fi
 #done
-mkdir -p /var/www/openmediavault/bbs > /dev/null 2>&1
-cd /var/www/openmediavault/bbs > /dev/null 2>&1
-wget 'http://projekte.textmulch.de/bicbucstriim/downloads/BicBucStriim-1.1.0.zip' -O /var/www/openmediavault/bbs/BicBucStriim-1.1.0.zip > /dev/null 2>&1
+#mkdir -p /var/www/openmediavault/bbs > /dev/null 2>&1
+cd /var/www/openmediavault > /dev/null 2>&1
+wget 'http://projekte.textmulch.de/bicbucstriim/downloads/BicBucStriim-1.1.0.zip' -O /var/www/openmediavault/BicBucStriim-1.1.0.zip > /dev/null 2>&1
 unzip -o /var/www/openmediavault/bbs/BicBucStriim-1.1.0.zip -d /var/www/openmediavault/bbs > /dev/null 2>&1
 rm -Rf /var/www/openmediavault/bbs/BicBucStriim-1.1.0.zip > /dev/null 2>&1
-chown openmediavault:openmediavault -R /var/www/openmediavault/bbs/BicBucStriim-1.1.0.zip > /dev/null 2>&1
+chown openmediavault:openmediavault -R /var/www/openmediavault/bbs > /dev/null 2>&1
 chmod 755 -R /var/www/openmediavault/bbs > /dev/null 2>&1
 #chmod 777 -R /var/www/openmediavault/extplorer/ftp_tmp > /dev/null 2>&1
 service="BicBucStriim"
