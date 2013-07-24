@@ -388,7 +388,7 @@ rm -fR /var/www/openmediavault/images/MyLar.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/MyLar.js > /dev/null 2>&1
 }
 
-Uninstall_Gamez
+Uninstall_Gamez()
 {
 service GameZ stop > /dev/null 2>&1
 sleep 2
