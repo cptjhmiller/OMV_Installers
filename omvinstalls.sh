@@ -66,7 +66,7 @@ screen()
 clear;
 echo "";
 echo "    -------------------------------Millers-------------------------------";
-echo "              OpenMediaVault Multi Application Installer V1.7.1          ";
+echo "              OpenMediaVault Multi Application Installer V1.8.0          ";
 echo "";
 }
 
@@ -364,6 +364,15 @@ rm -fR /var/www/openmediavault/js/omv/module/Extplorer.js > /dev/null 2>&1
 #); ?>
 }
 
+Uninstall_BicBucStriim()
+{
+uinst="1"
+echo "uninstalling................BicBucStriim"
+rm -fR /var/www/openmediavault/bbs > /dev/null 2>&1
+rm -fR /var/www/openmediavault/images/BicBucStriim.png > /dev/null 2>&1
+rm -fR /var/www/openmediavault/js/omv/module/BicBucStriim.js > /dev/null 2>&1
+}
+
 Uninstall_MyLar()
 {
 uinst="1"
@@ -377,6 +386,19 @@ sleep 2
 rm -fR /var/run/mylar.pid > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/MyLar.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/MyLar.js > /dev/null 2>&1
+}
+
+Uninstall_Gamez
+{
+service GameZ stop > /dev/null 2>&1
+sleep 2
+rm -fR /etc/init.d/GameZ  > /dev/null 2>&1
+update-rc.d -f GameZ remove > /dev/null 2>&1
+rm -fR $INSTALLDIR/GameZ > /dev/null 2>&1
+sleep 2
+rm -fR /var/run/GameZ.pid > /dev/null 2>&1
+rm -fR /var/www/openmediavault/images/GameZ.png > /dev/null 2>&1
+rm -fR /var/www/openmediavault/js/omv/module/GameZ.js > /dev/null 2>&1
 }
 
 Uninstall_MusicCabinet()
@@ -448,6 +470,8 @@ sub="0"
 exp="0"
 ml="0"
 mc="0"
+gz="0"
+bbs="0"
 uml="0"
 ucpv="0"
 ucpm="0"
@@ -468,6 +492,8 @@ umar="0"
 udel="0"
 uasub="0"
 uexp="0"
+ugz="0"
+ubbs="0"
 #sleep 3
 cd /tmp
 #Menu & python option
@@ -488,6 +514,7 @@ echo "           7. HeadPhones (Master)           16. Deluge"
 echo "           8. HeadPhones (Develop)          17. Auto-Sub"
 echo "           9. Sabnzbdplus                   18. Extplorer"
 echo "          19. MyLar                         20. Music Cabinet"
+echo "          21. GameZ                         22. BicBucStriim"
 echo ""
 echo "                                 Q. Quit"
 if [ "$INSTALLDIR" == "" ]; then
@@ -582,6 +609,14 @@ Uninstall_MyLar;
 -20)
 Uninstall_MusicCabinet;
 ;;
+# Uninstall Gamez
+-21)
+Uninstall_GameZ;
+;;
+# Uninstall Gamez
+-21)
+Uninstall_BicBucStriim;
+;;
 # CouchPotato
 1)
 cpv="1"
@@ -661,6 +696,14 @@ ml="1"
 # MusicCabinet
 20)
 mc="1"
+;;
+# GameZ
+21)
+gz="1"
+;;
+# BicBucStriim
+22)
+bbs="1"
 ;;
 # Change IP address
 I|i)
@@ -792,6 +835,16 @@ fi
 if [ "$exp" = "1" ]; then
 	echo "               Extplorer";
 fi
+
+if [ "$gz" == "1" ]; then 
+	echo "               Gamez";
+fi
+
+if [ "$bbs" == "1" ]; then 
+	echo "               BicBucStriim";
+fi
+
+
 echo "";
 if QUESTION; then
 	installs;
@@ -945,8 +998,8 @@ if [ "$MILLERSCONFIG3" == "n" ]; then
 	/usr/bin/apt-get -qq install debian-keyring > /dev/null 2>&1
 	gpg --keyring /usr/share/keyrings/debian-keyring.gpg -a --export 07DC563D1F41B907 |apt-key add - > /dev/null 2>&1
 	apt-get update > /dev/null 2>&1
-	wget http://www.dotdeb.org/dotdeb.gpg > /dev/null 2>&1
-	cat dotdeb.gpg | sudo apt-key add - > /dev/null 2>&1
+	#wget http://www.dotdeb.org/dotdeb.gpg > /dev/null 2>&1
+	#cat dotdeb.gpg | sudo apt-key add - > /dev/null 2>&1
 	#Get OMV version to install correct plugin.
 	if [ ! -e /etc/apt/preferences.d/99omv-plugins-org ]; then
 		OMV_V=`expr substr "$(cat /etc/issue)" 18 1`
@@ -1076,6 +1129,110 @@ fi
 if [ "$mc" == "1" ]; then
 	install_MC;
 fi
+
+if [ "$gz" == "1" ]; then 
+	install_GZ;
+fi
+
+if [ "$bbs" == "1" ]; then 
+	install_BBS;
+fi
+}
+
+install_GZ()
+{
+service Gamez stop > /dev/null 2>&1
+screen;
+cd /tmp
+echo
+echo "*****************You selected to install Gamez***********************";
+echo
+echo "Downloading and installing GameZ...";
+git clone git://github.com/avjui/Gamez.git new_GZ > /dev/null 2>&1
+if [ -d $INSTALLDIR/GameZ ]; then
+cp -fRa /tmp/new_GZ/. $INSTALLDIR/GameZ
+rm -fR /tmp/new_GZ
+else
+mv /tmp/new_GZ $INSTALLDIR/GameZ
+echo '[global]
+server.socket_host = "0.0.0.0"' > $INSTALLDIR/GameZ/Gamez.ini
+fi
+#rm -fR $INSTALLDIR/GameZ/.git
+echo "Setting up startup options"
+echo '#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          GameZ
+# Required-Start:    $all
+# Required-Stop:     $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts instance of GameZ
+# Description:       starts instance of GameZ using start-stop-daemon
+### END INIT INFO
+
+############### EDIT ME ##################
+# startup args
+DAEMON_OPTS="Gamez.py -d --nolaunch"
+
+# script name
+NAME=GameZ
+
+# app name
+DESC=GameZ
+
+# user
+RUN_AS='${mainuser}'
+# path to app
+APP_PATH='${INSTALLDIR}'/GameZ
+# path to python bin
+DAEMON='${py}'
+PID_FILE=/var/run/GameZ.pid
+
+############### END EDIT ME ##################
+
+test -x $DAEMON || exit 0
+
+set -e
+
+case "$1" in
+  start)
+        echo "Starting $DESC"
+        start-stop-daemon -d $APP_PATH -c $RUN_AS --start --background --pidfile $PID_FILE  --make-pidfile --exec $DAEMON -- $DAEMON_OPTS
+        ;;
+  stop)
+        echo "Stopping $DESC"
+        start-stop-daemon --stop --pidfile $PID_FILE | rm -rf $PID_FILE
+        ;;
+
+  restart|force-reload)
+        echo "Restarting $DESC"
+        start-stop-daemon --stop --pidfile $PID_FILE
+        sleep 15
+        start-stop-daemon -d $APP_PATH -c $RUN_AS --start --background --pidfile $PID_FILE  --make-pidfile --exec $DAEMON -- $DAEMON_OPTS
+        ;;
+  *)
+        N=/etc/init.d/$NAME
+        echo "Usage: $N {start|stop|restart|force-reload}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0' > /etc/init.d/GameZ
+sudo chmod 755 /etc/init.d/GameZ > /dev/null 2>&1
+update-rc.d GameZ defaults > /dev/null 2>&1
+sudo chmod -R a+x $INSTALLDIR/GameZ > /dev/null 2>&1
+sudo chown -hR $mainuser:$maingroup $INSTALLDIR/GameZ > /dev/null 2>&1
+service GameZ start > /dev/null 2>&1
+sleep 5
+service GameZ stop > /dev/null 2>&1
+sudo chmod -R a+x $INSTALLDIR/GameZ > /dev/null 2>&1
+service GameZ start > /dev/null 2>&1
+service="GameZ"
+address="http://$ip:8085"
+panel;
+echo "Finished"
+sleep 1
 }
 
 install_ASUB()
@@ -1647,6 +1804,42 @@ if [ "$mc" == "0" ]; then
 	echo "Finished";
 	sleep 1
 fi
+}
+
+install_BBS()
+{
+screen;
+echo
+echo "    ***************You selected to install BicBucStriim******************";
+echo
+echo "Downloading and installing BicBucStriim...";
+#echo " ";
+#t=9
+#echo -ne 9%           \\r
+#appinstall="php-auth-http php-mail-mime libjs-extjs php-compat php-mime-type php-http-webdav-server libjs-yui php-auth libjs-edit-area php-services-json php-net-ftp php-mail-mimedecode php-geshi"
+#for item in ${appinstall[@]}; do
+#	echo -ne $t%           \\r
+#	if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
+#		/usr/bin/apt-get -qq install  "$item"
+#		t=$(($t + 7))
+#	else
+#		t=$(($t + 7))
+#	fi
+#done
+mkdir -p /var/www/openmediavault/bbs > /dev/null 2>&1
+cd /var/www/openmediavault/bbs > /dev/null 2>&1
+wget 'http://projekte.textmulch.de/bicbucstriim/downloads/BicBucStriim-1.1.0.zip' -O /var/www/openmediavault/bbs/BicBucStriim-1.1.0.zip > /dev/null 2>&1
+unzip -o /var/www/openmediavault/bbs/BicBucStriim-1.1.0.zip -d /var/www/openmediavault/bbs > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/bbs/BicBucStriim-1.1.0.zip > /dev/null 2>&1
+chown openmediavault:openmediavault -R /var/www/openmediavault/bbs/BicBucStriim-1.1.0.zip > /dev/null 2>&1
+chmod 755 -R /var/www/openmediavault/bbs > /dev/null 2>&1
+#chmod 777 -R /var/www/openmediavault/extplorer/ftp_tmp > /dev/null 2>&1
+service="BicBucStriim"
+address="http://$ip/bbs"
+panel;
+echo "";
+echo "Finished";
+sleep 1
 }
 
 install_EXP()
@@ -3568,6 +3761,14 @@ fi
 
 if [ "$exp" == "1" ]; then
 	echo "    	Extplorer     ---     http://$ip/extplorer";
+fi
+
+if [ "$gz" == "1" ]; then
+	echo "    	GameZ         ---     http://$ip:8085";
+fi
+
+if [ "$bbs" == "1" ]; then
+	echo "    	BicBucStriim  ---     http://$ip/bbs";
 fi
 sleep 5
 exit 0
