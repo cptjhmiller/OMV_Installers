@@ -611,10 +611,10 @@ Uninstall_MusicCabinet;
 ;;
 # Uninstall Gamez
 -21)
-Uninstall_GameZ;
+Uninstall_Gamez;
 ;;
-# Uninstall Gamez
--21)
+# Uninstall BicBucStriim
+-22)
 Uninstall_BicBucStriim;
 ;;
 # CouchPotato
