@@ -66,7 +66,7 @@ screen()
 clear;
 echo "";
 echo "    -------------------------------Millers-------------------------------";
-echo "              OpenMediaVault Multi Application Installer V1.8.0          ";
+echo "              OpenMediaVault Multi Application Installer V1.8.2          ";
 echo "";
 }
 
@@ -1002,7 +1002,7 @@ if [ "$MILLERSCONFIG3" == "n" ]; then
 	#wget http://www.dotdeb.org/dotdeb.gpg > /dev/null 2>&1
 	#cat dotdeb.gpg | sudo apt-key add - > /dev/null 2>&1
 	#Get OMV version to install correct plugin.
-	if [ ! -e /etc/apt/preferences.d/99omv-plugins-org ]; then
+	if [ ! -f openmediavault-omvpluginsorg.list ]; then
 		OMV_V=`expr substr "$(cat /etc/issue)" 18 1`
 		if [ "$OMV_V" == "2" ]; then
 			echo -ne 22%           \\r
@@ -1011,7 +1011,7 @@ if [ "$MILLERSCONFIG3" == "n" ]; then
 			dpkg -i openmediavault-omvpluginsorg_0.2.3_all.deb > /dev/null 2>&1
 			rm openmediavault-omvpluginsorg_0.2.3_all.deb > /dev/null 2>&1
 			echo -ne 26%           \\r
-		elif [ "$OMV_V" == "O" ]; then
+		elif [ "$OMV_V" == "3" ]; then
 			echo -ne 22%           \\r
 			wget http://packages.omv-plugins.org/pool/main/o/openmediavault-omvpluginsorg/openmediavault-omvpluginsorg_0.3.5~1.gbp97ef9e_all.deb > /dev/null 2>&1
 			echo -ne 24%           \\r
