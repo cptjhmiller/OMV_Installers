@@ -3917,6 +3917,7 @@ echo "                    In order to run, this app needs python2.7";
 echo "Install python2.7? (it will take some time)"
 if QUESTION; then
 	install_PYTHON
+	cd /tmp
 	echo "Downloading and installing XDM...";
 	git clone git://github.com/lad1337/XDM.git new_xdm > /dev/null
 	ret=$?
