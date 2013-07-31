@@ -119,6 +119,54 @@ else
 fi
 }
 
+install_PYTHON()
+{
+t=9
+appinstall="build-essential libsqlite3-dev libssl-dev ncurses-dev libreadline5-dev libncursesw5-dev libgdbm-dev libbz2-dev libc6-dev tk-dev libdb4.6-dev tk8.5 tk8.5-dev"
+for item in ${appinstall[@]}; do
+	echo -ne $t%           \\r
+		if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
+			/usr/bin/apt-get -qq install "$item" > /dev/null 2>&1
+			t=$(($t + 7))
+		else
+			t=$(($t + 7))
+		fi
+done
+cd /tmp
+wget http://www.python.org/ftp/python/2.7.5/Python-2.7.5.tgz
+tar zxvf Python-2.7.5.tgz
+rm -f Python-2.7.5.tgz
+cd Python-2.7.5
+./configure
+make altinstall
+rm -f /usr/bin/python2.7-config
+rm -f /usr/bin/python2.7
+ln -s /usr/local/bin/python2.7 /usr/bin/python2.7
+ln -s /usr/local/bin/python2.7-config /usr/bin/python2.7-config
+wget http://pypi.python.org/packages/source/C/Cheetah/Cheetah-2.4.4.tar.gz --no-check-certificate
+tar zxvf Cheetah-2.4.4.tar.gz
+cd Cheetah-2.4.4
+/usr/local/bin/python2.7 setup.py install
+wget https://pypi.python.org/packages/source/s/setuptools/setuptools-0.9.tar.gz --no-check-certificate
+tar zxvf setuptools-0.9.tar.gz
+cd setuptools-0.9
+/usr/local/bin/python2.7 setup.py install
+wget https://pypi.python.org/packages/source/p/pip/pip-1.4.tar.gz --no-check-certificate
+tar xzf pip-1.4.tar.gz
+cd pip-1.4
+/usr/local/bin/python2.7 setup.py install
+wget http://sabnzbd.sourceforge.net/yenc-0.3.tar.gz
+tar zxf yenc-0.3.tar.gz
+cd yenc-0.3
+/usr/local/bin/python2.7 setup.py install   # Need to do this as admin
+wget http://ftp.edgewall.com/pub/babel/Babel-0.9.6.tar.gz
+tar xzf Babel-0.9.6.tar.gz
+cd Babel-0.9.6
+/usr/local/bin/python2.7 setup.py install
+cd /
+rm -Rf /tmp/Python-2.7.5
+}
+
 changeip()
 {
 screen;
@@ -402,6 +450,20 @@ rm -fR /var/www/openmediavault/images/GameZ.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/GameZ.js > /dev/null 2>&1
 }
 
+Uninstall_XDM()
+{
+uinst="1"
+service xdm stop > /dev/null 2>&1
+sleep 2
+rm -fR /etc/init.d/xdm  > /dev/null 2>&1
+update-rc.d -f xdm remove > /dev/null 2>&1
+rm -fR $INSTALLDIR/XDM > /dev/null 2>&1
+sleep 2
+rm -fR /var/run/xdm.pid > /dev/null 2>&1
+rm -fR /var/www/openmediavault/images/XDM.png > /dev/null 2>&1
+rm -fR /var/www/openmediavault/js/omv/module/XDM.js > /dev/null 2>&1
+}
+
 Uninstall_MusicCabinet()
 {
 uinst="1"
@@ -474,6 +536,7 @@ mc="0"
 gz="0"
 bbs="0"
 uml="0"
+xdm="0"
 ucpv="0"
 ucpm="0"
 ucpd="0"
@@ -495,6 +558,7 @@ uasub="0"
 uexp="0"
 ugz="0"
 ubbs="0"
+uxdm="0"
 #sleep 3
 cd /tmp
 #Menu & python option
@@ -516,6 +580,7 @@ echo "           8. HeadPhones (Develop)          17. Auto-Sub"
 echo "           9. Sabnzbdplus                   18. Extplorer"
 echo "          19. MyLar                         20. Music Cabinet"
 echo "          21. GameZ                         22. BicBucStriim"
+echo "                                 23. XDM"
 echo ""
 echo "                                 Q. Quit"
 if [ "$INSTALLDIR" == "" ]; then
@@ -618,6 +683,10 @@ Uninstall_Gamez;
 -22)
 Uninstall_BicBucStriim;
 ;;
+# Uninstall XDM
+-23)
+Uninstall_XDM;
+;;
 # CouchPotato
 1)
 cpv="1"
@@ -705,6 +774,10 @@ gz="1"
 # BicBucStriim
 22)
 bbs="1"
+;;
+# XDM
+23)
+xdm="1"
 ;;
 # Change IP address
 I|i)
@@ -843,6 +916,10 @@ fi
 
 if [ "$bbs" == "1" ]; then 
 	echo "               BicBucStriim";
+fi
+
+if [ "$xdm" == "1" ]; then 
+	echo "               XDM";
 fi
 
 
@@ -1136,7 +1213,7 @@ if [ "$gz" == "1" ]; then
 fi
 
 if [ "$bbs" == "1" ]; then 
-	install_BBS;
+	install_XDM;
 fi
 }
 
@@ -3774,6 +3851,10 @@ fi
 if [ "$bbs" == "1" ]; then
 	echo "    	BicBucStriim  ---     http://$ip/bbs";
 fi
+
+if [ "$xdm" == "1" ]; then
+	echo "    	XDM  ---     http://$ip:8085";
+fi
 sleep 5
 exit 0
 }
@@ -3816,6 +3897,118 @@ if [ "$currentuser" != "root" ]; then
 fi
 }
 
+install_XDM()
+{
+screen;
+cd /tmp
+if [ -f /etc/init.d/xdm ]; then
+	service xdm stop > /dev/null 2>&1
+	rm /etc/init.d/xdm
+	update-rc.d -f xdm remove
+fi
+echo
+echo "    *********************You selected to install XDM**********************";
+echo
+echo "                    In order to run, this app needs python2.7";
+echo "Install python2.7? (it will take some time)"
+if QUESTION; then
+	install_PYTHON
+	echo "Downloading and installing XDM...";
+	git clone git://github.com/lad1337/XDM.git new_xdm > /dev/null
+	ret=$?
+	if ! test "$ret" -eq 0; then
+		echo >&2 "git clone xdm Version 1 failed with exit status $ret"
+		exit 1
+	fi
+	if [ -d $INSTALLDIR/XDM ]; then
+		cp -fRa /tmp/new_xdm/. $INSTALLDIR/XDM
+		rm -fR /tmp/new_xdm
+	else
+		mv /tmp/new_xdm $INSTALLDIR/XDM
+	fi
+	echo "Setting up startup options"
+	echo '#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          xdm
+# Required-Start:    $all
+# Required-Stop:     $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts instance of xdm
+# Description:       starts instance of xdm using start-stop-daemon
+### END INIT INFO
+
+############### EDIT ME ##################
+# startup args
+# script name
+NAME=xdm
+
+# app name
+DESC=XDM
+
+# user
+RUN_AS='${mainuser}'
+# path to app
+APP_PATH='${INSTALLDIR}'/XDM
+# path to python bin
+DAEMON=/usr/bin/python2.7
+PID_FILE=/var/run/xdm.pid
+DAEMON_OPTS="XDM.py -d --nolaunch --pidfile $PID_FILE"
+############### END EDIT ME ##################
+
+test -x $DAEMON || exit 0
+
+set -e
+
+case "$1" in
+  start)
+        echo "Starting $DESC"
+        start-stop-daemon -d $APP_PATH -c $RUN_AS --start --background --pidfile $PID_FILE  --make-pidfile --exec $DAEMON -- $DAEMON_OPTS
+        ;;
+  stop)
+        echo "Stopping $DESC"
+        start-stop-daemon --stop --pidfile $PID_FILE | rm -rf $PID_FILE
+        ;;
+
+  restart|force-reload)
+        echo "Restarting $DESC"
+        start-stop-daemon --stop --pidfile $PID_FILE
+        sleep 15
+        start-stop-daemon -d $APP_PATH -c $RUN_AS --start --background --pidfile $PID_FILE  --make-pidfile --exec $DAEMON -- $DAEMON_OPTS
+        ;;
+  *)
+        N=/etc/init.d/$NAME
+        echo "Usage: $N {start|stop|restart|force-reload}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0' > /etc/init.d/xdm
+	cd $INSTALLDIR/XDM
+	/usr/local/bin/pip-2.7 install jinja2
+	/usr/local/bin/pybabel extract -F babel.cfg -o ./i18n/messages.pot .
+	/usr/local/bin/pybabel init -i ./i18n/messages.pot -d i18n -l ``en``
+	/usr/local/bin/pybabel update -i ./i18n/messages.pot -d i18n
+	/usr/local/bin/pybabel compile -d i18n -f
+	chmod 755 /etc/init.d/xdm > /dev/null 2>&1
+	update-rc.d xdm defaults > /dev/null 2>&1
+	chmod -R a+x $INSTALLDIR/XDM > /dev/null 2>&1
+	chown -hR $mainuser:$maingroup $INSTALLDIR/XDM > /dev/null 2>&1
+	service xdm start > /dev/null 2>&1
+	sleep 5
+	service xdm stop > /dev/null 2>&1
+	chmod -R a+x $INSTALLDIR/XDM > /dev/null 2>&1
+	service xdm start > /dev/null 2>&1
+	service="XDM"
+	address="http://$ip:8085"
+	panel;
+	echo "";
+	echo "Finished";
+	sleep 1
+else
+	xdm='0'
+}
 
 warnRoot;
 menu;
@@ -3824,39 +4017,6 @@ menu;
 exit 0
 
 # End of script
-install_PYTHON()
-{
-/usr/bin/apt-get -qy install build-essential libsqlite3-dev libssl-dev ncurses-dev libreadline5-dev libncursesw5-dev libgdbm-dev libbz2-dev libc6-dev tk-dev libdb4.6-dev tk8.5 tk8.5-dev
-cd /tmp
-wget http://www.python.org/ftp/python/2.7.5/Python-2.7.5.tgz
-tar zxvf Python-2.7.5.tgz
-rm -f Python-2.7.5.tgz
-cd Python-2.7.5
-./configure
-make altinstall
-rm -f /usr/bin/python2.7-config
-rm -f /usr/bin/python2.7
-ln -s /usr/local/bin/python2.7 /usr/bin/python2.7
-ln -s /usr/local/bin/python2.7-config /usr/bin/python2.7-config
-wget http://pypi.python.org/packages/source/C/Cheetah/Cheetah-2.4.4.tar.gz --no-check-certificate
-tar zxvf Cheetah-2.4.4.tar.gz
-cd Cheetah-2.4.4
-/usr/local/bin/python2.7 setup.py install
-wget https://pypi.python.org/packages/source/s/setuptools/setuptools-0.9.tar.gz --no-check-certificate
-tar zxvf setuptools-0.9.tar.gz
-cd setuptools-0.9
-/usr/local/bin/python2.7 setup.py install
-wget https://pypi.python.org/packages/source/p/pip/pip-1.4.tar.gz --no-check-certificate
-tar xzf pip-1.4.tar.gz
-cd pip-1.4
-/usr/local/bin/python2.7 setup.py install
-wget http://sabnzbd.sourceforge.net/yenc-0.3.tar.gz
-tar zxf yenc-0.3.tar.gz
-cd yenc-0.3
-/usr/local/bin/python2.7 setup.py install   # Need to do this as admin
-cd ..
-}
-
 CRAP()
 {
 MYSQL=$(which mysql)
