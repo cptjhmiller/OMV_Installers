@@ -3828,26 +3828,32 @@ install_PYTHON()
 {
 /usr/bin/apt-get -qy install build-essential libsqlite3-dev libssl-dev ncurses-dev libreadline5-dev libncursesw5-dev libgdbm-dev libbz2-dev libc6-dev tk-dev libdb4.6-dev tk8.5 tk8.5-dev
 cd /tmp
-wget http://www.python.org/ftp/python/2.7.3/Python-2.7.3.tgz
-tar zxvf Python-2.7.3.tgz
-rm -f Python-2.7.3.tgz
-cd Python-2.7.3
+wget http://www.python.org/ftp/python/2.7.5/Python-2.7.5.tgz
+tar zxvf Python-2.7.5.tgz
+rm -f Python-2.7.5.tgz
+cd Python-2.7.5
 ./configure
 make altinstall
-wget http://pypi.python.org/packages/source/C/Cheetah/Cheetah-2.4.4.tar.gz
+rm -f /usr/bin/python2.7-config
+rm -f /usr/bin/python2.7
+ln -s /usr/local/bin/python2.7 /usr/bin/python2.7
+ln -s /usr/local/bin/python2.7-config /usr/bin/python2.7-config
+wget http://pypi.python.org/packages/source/C/Cheetah/Cheetah-2.4.4.tar.gz --no-check-certificate
 tar zxvf Cheetah-2.4.4.tar.gz
 cd Cheetah-2.4.4
-python2.7 setup.py install
-wget http://python-distribute.org/distribute_setup.py
-python2.7 distribute_setup.py
-wget http://pypi.python.org/packages/source/p/pip/pip-0.7.2.tar.gz
-tar xzf pip-0.7.2.tar.gz
-cd pip-0.7.2
-python2.7 setup.py install
+/usr/local/bin/python2.7 setup.py install
+wget https://pypi.python.org/packages/source/s/setuptools/setuptools-0.9.tar.gz --no-check-certificate
+tar zxvf setuptools-0.9.tar.gz
+cd setuptools-0.9
+/usr/local/bin/python2.7 setup.py install
+wget https://pypi.python.org/packages/source/p/pip/pip-1.4.tar.gz --no-check-certificate
+tar xzf pip-1.4.tar.gz
+cd pip-1.4
+/usr/local/bin/python2.7 setup.py install
 wget http://sabnzbd.sourceforge.net/yenc-0.3.tar.gz
 tar zxf yenc-0.3.tar.gz
 cd yenc-0.3
-python2.7 setup.py install   # Need to do this as admin
+/usr/local/bin/python2.7 setup.py install   # Need to do this as admin
 cd ..
 }
 
