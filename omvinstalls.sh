@@ -3928,7 +3928,6 @@ if QUESTION; then
 	fi
 	echo "Setting up startup options"
 	echo '#! /bin/sh
-
 ### BEGIN INIT INFO
 # Provides:          xdm
 # Required-Start:    $all
@@ -4007,7 +4006,8 @@ exit 0' > /etc/init.d/xdm
 	echo "Finished";
 	sleep 1
 else
-	xdm='0'
+	xdm="0"
+fi
 }
 
 warnRoot;
