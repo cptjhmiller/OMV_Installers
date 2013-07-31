@@ -1213,6 +1213,10 @@ if [ "$gz" == "1" ]; then
 fi
 
 if [ "$bbs" == "1" ]; then 
+	install_BBS;
+fi
+
+if [ "$xdm" == "1" ]; then 
 	install_XDM;
 fi
 }
