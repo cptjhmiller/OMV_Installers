@@ -66,7 +66,7 @@ screen()
 clear;
 echo "";
 echo "    -------------------------------Millers-------------------------------";
-echo "              OpenMediaVault Multi Application Installer V1.8.2          ";
+echo "              OpenMediaVault Multi Application Installer V1.8.3          ";
 echo "";
 }
 
