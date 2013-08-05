@@ -2281,17 +2281,22 @@ echo "Downloading latest STABLE SABnzbd $STABLE"
 wget -nv http://downloads.sourceforge.net/project/sabnzbdplus/sabnzbdplus/${STABLE}/SABnzbd-${STABLE}-src.tar.gz > /dev/null 2>&1
 tar xzf SABnzbd-${STABLE}-src.tar.gz > /dev/null 2>&1
 rm SABnzbd*.tar.gz
+service SABnzbd stop > /dev/null 2>&1
 if [ -d $INSTALLDIR/SABnzbd ]; then
 	cp -fRa /tmp/SABnzbd-${STABLE}/. $INSTALLDIR/SABnzbd/
 	rm -fR /tmp/SABnzbd-${STABLE}
 else
 	mv /tmp/SABnzbd-${STABLE} $INSTALLDIR/SABnzbd
 fi
-service SABnzbd stop > /dev/null 2>&1
 if [ -f /etc/init.d/sabinit ]; then
 	service sabinit stop > /dev/null 2>&1
-	rm /etc/init.d/sabinit
 	update-rc.d -f sabinit remove
+	rm /etc/init.d/sabinit
+fi
+if [ -f /etc/init.d/sabnzbdplus ]; then
+	service sabnzbdplus stop > /dev/null 2>&1
+	update-rc.d -f sabnzbdplus remove
+	rm /etc/init.d/sabnzbdplus
 fi
 echo "Setting up startup options";
 SABSETTINGS="'1s/^#\! \?\([a-z0-9\.\/]\+\)\(.*\)/\1(\2)?/p'"
