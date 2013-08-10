@@ -479,7 +479,17 @@ rm -fR /var/lib/dpkg/info/subsonic.list > /dev/null 2>&1
 rm -fR /var/lib/dpkg/info/subsonic.postrm > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/MusicCabinet.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/MusicCabinet.js > /dev/null 2>&1
-/usr/bin/apt-get -y purge postgresql-contrib-9.2 postgresql-9.2 pgdg-keyring postgresql-common postgresql-client-9.2 postgresql-client-common
+t=10
+appinstall=`dpkg-query -W -f '${package}\n' | grep postgres`
+for item in ${appinstall[@]}; do
+	echo -ne $t%           \\r
+	/usr/bin/apt-get -y remove "$item" > /dev/null 2>&1
+	sleep 2
+	/usr/bin/apt-get -y purge "$item" > /dev/null 2>&1
+	t=$(($t + 20))
+done
+rm -R /etc/postgresql-common
+rm -R /var/lib/postgresql
 }
 
 getmysql()
