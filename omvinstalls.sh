@@ -490,6 +490,11 @@ for item in ${appinstall[@]}; do
 done
 rm -R /etc/postgresql-common
 rm -R /var/lib/postgresql
+
+
+
+
+
 }
 
 getmysql()
@@ -2851,7 +2856,10 @@ if [ ! -e /usr/bin/deluge ]; then
 	echo "Most needed files have been downloaded, Compiling will start";
 	echo "shortly. This will take some time, please wait...";
 	#python setup.py clean -a > /dev/null 2>&1
-	#get_libtorrent.sh
+	sed -i -e 's/libtorrent.svn.sourceforge.net\/svnroot\/libtorrent/svn.code.sf.net\/p\/libtorrent\/code/' /tmp/deluge-1.3.6/get_libtorrent.sh
+	#sed -i -e 's/VERSION=14/VERSION=16/' /tmp/deluge-1.3.6/get_libtorrent.sh
+	#https://svn.code.sf.net/p/libtorrent/code
+	/tmp/deluge-1.3.6/get_libtorrent.sh
 	sleep 2
 	python setup.py build
 	screen;
