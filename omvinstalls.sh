@@ -66,7 +66,7 @@ screen()
 clear;
 echo "";
 echo "    -------------------------------Millers-------------------------------";
-echo "              OpenMediaVault Multi Application Installer V1.8.3          ";
+echo "              OpenMediaVault Multi Application Installer V1.8.5          ";
 echo "";
 }
 
@@ -3729,26 +3729,44 @@ echo "";
 echo "You have installed $service, You can now add a link";
 echo "to the side menu in OMV.";
 echo "";
-if QUESTION; then
+if QUESTION && [ "$OMV_V" -eq 5 ] || [ "$OMV_V" -gt 5 ]; then
+	mkdir -p /var/www/openmediavault/js/omv/module/admin/service/${service}
 	echo '/**
-* This file is part of OpenMediaVault.
- *
- * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
- * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2012 Volker Theile
- *
- * OpenMediaVault is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * OpenMediaVault is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
+ * This file is not part of OpenMediaVault.
+ */
+// require("js/omv/WorkspaceManager.js")
+// require("js/omv/workspace/form/Panel.js")
+/**
+ * @class OMV.module.admin.service.'${service}'.'${service}'
+ * @derived OMV.workspace.panel.Panel
+ */
+Ext.define("OMV.module.admin.service.'${service}'.'${service}'", {
+initComponent: function() {
+        window.open("'${address}'","_blank")
+}
+});
+
+OMV.WorkspaceManager.registerNode({
+        id: "'${service}'",
+        path: "/service",
+        text: _("'${service}'"),
+        icon16: "images/'${service}'.png",
+});
+
+OMV.WorkspaceManager.registerPanel({
+        id: "settings",
+        path: "/service/'${service}'",
+        className: "OMV.module.admin.service.'${service}'.'${service}'"
+});
+' > /var/www/openmediavault/js/omv/module/admin/service/$service/$service.js
+		if ! [ -e /var/www/openmediavault/images/$service.png ]; then
+			cd /var/www/openmediavault/images
+			wget https://raw.github.com/cptjhmiller/OMV_Installers/master/images/$service.png --no-check-certificate > /dev/null 2>&1
+			cd /tmp
+		fi
+elif QUESTION && [ "$OMV_V" -eq 4 ] || [ "$OMV_V" -lt 4 ]; then
+	echo		'/**
+ * This file is not part of OpenMediaVault.
  */
 // require("js/omv/NavigationPanel.js")
 
@@ -3779,14 +3797,15 @@ Ext.extend(OMV.Module.Services.'${service}', Ext.Panel, {
 OMV.NavigationPanelMgr.registerPanel("services", "'${service}'", {
         cls: OMV.Module.Services.'${service}'
 });' > /var/www/openmediavault/js/omv/module/$service.js
-		if ! [ -e /var/www/openmediavault/images/$service.png ]; then
-			cd /var/www/openmediavault/images
-			wget https://raw.github.com/cptjhmiller/OMV_Installers/master/images/$service.png --no-check-certificate > /dev/null 2>&1
-			cd /tmp
-		fi
+	if ! [ -e /var/www/openmediavault/images/$service.png ]; then
+		cd /var/www/openmediavault/images
+		wget https://raw.github.com/cptjhmiller/OMV_Installers/master/images/$service.png --no-check-certificate > /dev/null 2>&1
+		cd /tmp
+	fi
 else
 	rm /var/www/openmediavault/images/$service.png > /dev/null 2>&1
 	rm /var/www/openmediavault/js/omv/module/$service.js > /dev/null 2>&1
+	rm -Rf /var/www/openmediavault/js/omv/module/admin/service/$service	
 	link="0"
 fi
 }
