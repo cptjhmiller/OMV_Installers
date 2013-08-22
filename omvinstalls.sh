@@ -3729,7 +3729,7 @@ echo "";
 echo "You have installed $service, You can now add a link";
 echo "to the side menu in OMV.";
 echo "";
-if QUESTION && [ $OMV_V >= 4 ]; then
+if QUESTION && [ $OMV_V>=5 ]; then
 	mkdir -p /var/www/openmediavault/js/omv/module/admin/service/${service}
 	echo '/**
  * This file is not part of OpenMediaVault.
@@ -3764,7 +3764,7 @@ OMV.WorkspaceManager.registerPanel({
 			wget https://raw.github.com/cptjhmiller/OMV_Installers/master/images/$service.png --no-check-certificate > /dev/null 2>&1
 			cd /tmp
 		fi
-elif QUESTION && [ $OMV_V <= 4 ]; then
+elif QUESTION && [ $OMV_V<=4 ]; then
 	echo		'/**
  * This file is not part of OpenMediaVault.
  */
