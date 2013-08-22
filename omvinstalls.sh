@@ -31,6 +31,7 @@ clear;
 INSTALLDIR=""
 mainuser="root"
 maingroup="root"
+OMV_V=`expr substr "$(cat /etc/issue)" 18 1`
 . /etc/default/openmediavault
 . /usr/share/openmediavault/scripts/helper-functions
 #/usr/local/bin/python2.7
@@ -1095,7 +1096,6 @@ if [ "$MILLERSCONFIG3" == "n" ]; then
 	#cat dotdeb.gpg | sudo apt-key add - > /dev/null 2>&1
 	#Get OMV version to install correct plugin.
 	if [ ! -f openmediavault-omvpluginsorg.list ]; then
-		OMV_V=`expr substr "$(cat /etc/issue)" 18 1`
 		if [ "$OMV_V" == "2" ]; then
 			echo -ne 22%           \\r
 			wget http://packages.omv-plugins.org/pool/main/o/openmediavault-omvpluginsorg/openmediavault-omvpluginsorg_0.2.3_all.deb > /dev/null 2>&1
@@ -3729,7 +3729,7 @@ echo "";
 echo "You have installed $service, You can now add a link";
 echo "to the side menu in OMV.";
 echo "";
-if QUESTION && [ "$OMV_V" -eq 5 ] || [ "$OMV_V" -gt 5 ]; then
+if QUESTION && [ $OMV_V >= 4 ]; then
 	mkdir -p /var/www/openmediavault/js/omv/module/admin/service/${service}
 	echo '/**
  * This file is not part of OpenMediaVault.
@@ -3764,7 +3764,7 @@ OMV.WorkspaceManager.registerPanel({
 			wget https://raw.github.com/cptjhmiller/OMV_Installers/master/images/$service.png --no-check-certificate > /dev/null 2>&1
 			cd /tmp
 		fi
-elif QUESTION && [ "$OMV_V" -eq 4 ] || [ "$OMV_V" -lt 4 ]; then
+elif QUESTION && [ $OMV_V <= 4 ]; then
 	echo		'/**
  * This file is not part of OpenMediaVault.
  */
