@@ -209,6 +209,7 @@ rm -fR /etc/init.d/CouchPotato > /dev/null 2>&1
 rm -fR $INSTALLDIR/CouchPotato > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/CouchPotato.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/CouchPotato.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/CouchPotato > /dev/null 2>&1
 }
 
 Uninstall_CouchPotatoServer()
@@ -224,6 +225,7 @@ rm -fR $INSTALLDIR/CouchPotatoServer > /dev/null 2>&1
 rm -fR /root/.couchpotato > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/CouchPotatoServer.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/CouchPotatoServer.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/CouchPotatoServer > /dev/null 2>&1
 }
 
 Uninstall_SickBeard()
@@ -237,6 +239,7 @@ rm -fR /etc/init.d/sickbeard > /dev/null 2>&1
 rm -fR $INSTALLDIR/sickbeard > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/SickBeard.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/SickBeard.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/SickBeard > /dev/null 2>&1
 }
 
 Uninstall_HeadPhones()
@@ -252,6 +255,7 @@ sleep 2
 rm -fR /var/run/headphones.pid > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/HeadPhones.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/HeadPhones.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/HeadPhones > /dev/null 2>&1
 }
 
 Uninstall_SABnzbd()
@@ -265,6 +269,7 @@ rm -fR /etc/init.d/SABnzbd > /dev/null 2>&1
 rm -fR $INSTALLDIR/SABnzbd > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/SABnzbd.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/SABnzbd.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/SABnzbd > /dev/null 2>&1
 }
 
 Uninstall_SubSonic()
@@ -282,6 +287,7 @@ rm -fR /var/lib/dpkg/info/subsonic.list > /dev/null 2>&1
 rm -fR /var/lib/dpkg/info/subsonic.postrm > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/SubSonic.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/SubSonic.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/SubSonic > /dev/null 2>&1
 }
 
 Uninstall_LazyLibrarian()
@@ -297,6 +303,7 @@ rm -fR /root/.lazylibrarian > /dev/null 2>&1
 rm -fR /var/run/lazylibrarian > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/LazyLibrarian.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/LazyLibrarian.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/LazyLibrarian > /dev/null 2>&1
 }
 
 Uninstall_PyLoad()
@@ -312,6 +319,7 @@ rm -fR /etc/init.d/pyload > /dev/null 2>&1
 rm -fR /root/.pyload > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/PyLoad.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/PyLoad.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/PyLoad > /dev/null 2>&1
 }
 
 Uninstall_newznab_free()
@@ -347,6 +355,7 @@ sleep 2
 rm -fR /var/run/maraschino.pid > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/Maraschino.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/Maraschino.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/Maraschino > /dev/null 2>&1
 }
 
 Uninstall_Deluge()
@@ -377,6 +386,7 @@ rm -fR /var/www/openmediavault/js/omv/module/Deluge.js > /dev/null 2>&1
 rm -fR /var/lib/deluge > /dev/null 2>&1
 userdel deluge > /dev/null 2>&1
 rm -fR /home/deluge > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/Deluge > /dev/null 2>&1
 }
 
 Uninstall_Auto-Sub()
@@ -390,6 +400,7 @@ rm -fR /etc/init.d/auto-sub > /dev/null 2>&1
 rm -fR $INSTALLDIR/auto-sub > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/Auto-Sub.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/Auto-Sub.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/Auto-Sub > /dev/null 2>&1
 /usr/bin/apt-get -qq purge mercurial
 }
 
@@ -402,6 +413,7 @@ rm -fR /var/www/openmediavault/extplorer > /dev/null 2>&1
 rm -R /etc/extplorer > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/Extplorer.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/Extplorer.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/Extplorer > /dev/null 2>&1
 #/etc/extplorer/.htusers.php
 #<?php
 #/** @version $Id: .htusers.php 135 2009-01-27 21:57:15Z ryu_ms $ */
@@ -420,6 +432,7 @@ echo "uninstalling................BicBucStriim"
 rm -fR /var/www/openmediavault/bbs > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/BicBucStriim.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/BicBucStriim.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/BicBucStriim > /dev/null 2>&1
 }
 
 Uninstall_MyLar()
@@ -435,6 +448,7 @@ sleep 2
 rm -fR /var/run/mylar.pid > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/MyLar.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/MyLar.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/MyLar > /dev/null 2>&1
 }
 
 Uninstall_Gamez()
@@ -449,6 +463,7 @@ sleep 2
 rm -fR /var/run/GameZ.pid > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/GameZ.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/GameZ.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/GameZ > /dev/null 2>&1
 }
 
 Uninstall_XDM()
@@ -463,6 +478,7 @@ sleep 2
 rm -fR /var/run/xdm.pid > /dev/null 2>&1
 rm -fR /var/www/openmediavault/images/XDM.png > /dev/null 2>&1
 rm -fR /var/www/openmediavault/js/omv/module/XDM.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/XDM > /dev/null 2>&1
 }
 
 Uninstall_MusicCabinet()
@@ -491,11 +507,7 @@ for item in ${appinstall[@]}; do
 done
 rm -R /etc/postgresql-common
 rm -R /var/lib/postgresql
-
-
-
-
-
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/MusicCabinet > /dev/null 2>&1
 }
 
 getmysql()
@@ -3729,9 +3741,10 @@ echo "";
 echo "You have installed $service, You can now add a link";
 echo "to the side menu in OMV.";
 echo "";
-if QUESTION && [ $OMV_V>=5 ]; then
-	mkdir -p /var/www/openmediavault/js/omv/module/admin/service/${service}
-	echo '/**
+if QUESTION; then
+	if [ $OMV_V -gt 4 ]; then
+		mkdir -p /var/www/openmediavault/js/omv/module/admin/service/${service}
+		echo '/**
  * This file is not part of OpenMediaVault.
  */
 // require("js/omv/WorkspaceManager.js")
@@ -3759,13 +3772,13 @@ OMV.WorkspaceManager.registerPanel({
         className: "OMV.module.admin.service.'${service}'.'${service}'"
 });
 ' > /var/www/openmediavault/js/omv/module/admin/service/$service/$service.js
-		if ! [ -e /var/www/openmediavault/images/$service.png ]; then
-			cd /var/www/openmediavault/images
-			wget https://raw.github.com/cptjhmiller/OMV_Installers/master/images/$service.png --no-check-certificate > /dev/null 2>&1
-			cd /tmp
-		fi
-elif QUESTION && [ $OMV_V<=4 ]; then
-	echo		'/**
+			if ! [ -e /var/www/openmediavault/images/$service.png ]; then
+				cd /var/www/openmediavault/images
+				wget https://raw.github.com/cptjhmiller/OMV_Installers/master/images/$service.png --no-check-certificate > /dev/null 2>&1
+				cd /tmp
+			fi
+	elif [ $OMV_V -lt 5 ]; then
+		echo		'/**
  * This file is not part of OpenMediaVault.
  */
 // require("js/omv/NavigationPanel.js")
@@ -3797,10 +3810,11 @@ Ext.extend(OMV.Module.Services.'${service}', Ext.Panel, {
 OMV.NavigationPanelMgr.registerPanel("services", "'${service}'", {
         cls: OMV.Module.Services.'${service}'
 });' > /var/www/openmediavault/js/omv/module/$service.js
-	if ! [ -e /var/www/openmediavault/images/$service.png ]; then
-		cd /var/www/openmediavault/images
-		wget https://raw.github.com/cptjhmiller/OMV_Installers/master/images/$service.png --no-check-certificate > /dev/null 2>&1
-		cd /tmp
+		if ! [ -e /var/www/openmediavault/images/$service.png ]; then
+			cd /var/www/openmediavault/images
+			wget https://raw.github.com/cptjhmiller/OMV_Installers/master/images/$service.png --no-check-certificate > /dev/null 2>&1
+			cd /tmp
+		fi
 	fi
 else
 	rm /var/www/openmediavault/images/$service.png > /dev/null 2>&1
