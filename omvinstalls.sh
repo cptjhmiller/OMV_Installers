@@ -119,7 +119,7 @@ echo
 
 whiptail --title "${TITLE}" --backtitle "${BACKTITLE}" --msgbox "This script will clean your OMV-Installation, so that you can upgrade from 0.4 to 0.5\n\nPlease read the following instructions carefully!" 11 78
 
-whiptail --title "${TITLE}" --backtitle "${BACKTITLE}" --yesno --defaultno "To clean up your OMV-installation, the following steps are required:\n1. remove all external plugins.\n   The config is still there\n2. rename *.js-files in $OMV_DOCUMENTROOT_DIR/js/omv/module and admin/\n3. move all *.deb files and local.list in $OMVAPT/\n4. move old-omvplugins.org-lists\n\nDo you want to do this?" 15 78
+whiptail --title "${TITLE}" --backtitle "${BACKTITLE}" --yesno --defaultno "To clean up your OMV-installation, the following steps are required:\n1. remove all external plugins.\n   The config is still there\n2a. rename *.js-files in $OMV_DOCUMENTROOT_DIR/js/omv/admin/\n2b. convert side panel items from OMV4 - OMV5\n3. move all *.deb files and local.list in $OMVAPT/\n4. move old-omvplugins.org-lists\n\nDo you want to do this?" 15 78
 [[ $? = 0 ]] || f_aborted
 
 whiptail --title "${TITLE}" --backtitle "${BACKTITLE}" --yesno --defaultno "You are using this script at your own risk!\n\nAre you ready to reinstall OMV if something goes wrong or this script isn't working as expected?" 11 78
