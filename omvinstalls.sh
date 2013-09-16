@@ -68,13 +68,13 @@ screen()
 clear;
 echo "";
 echo "    -------------------------------Millers-------------------------------";
-echo "              OpenMediaVault Multi Application Installer V1.8.5          ";
+echo "              OpenMediaVault Multi Application Installer V1.9.1          ";
 echo "";
 }
 
 ### Functions
 f_aborted() {
-	whiptail --title "Script cancelled" --backtitle "${BACKTITLE}" --msgbox "         Aborted!" 7 32
+	whiptail --title "Script cancelled" --backtitle "$BACKTITLE" --msgbox "         Aborted!" 7 32
 	exit 0
 }
 
@@ -116,17 +116,16 @@ OLDJSEXT="_omv0.4_$SCRIPTDATE"
 ### Begin of script
 
 echo
+whiptail --title "$TITLE" --backtitle "$BACKTITLE" --msgbox "This script will clean your OMV-Installation, so that you can upgrade from 0.4 to 0.5\n\nPlease read the following instructions carefully!" 11 78
 
-whiptail --title "${TITLE}" --backtitle "${BACKTITLE}" --msgbox "This script will clean your OMV-Installation, so that you can upgrade from 0.4 to 0.5\n\nPlease read the following instructions carefully!" 11 78
+whiptail --title "$TITLE" --backtitle "$BACKTITLE" --yesno --defaultno "To clean up your OMV-installation, the following steps are required:\n1. remove all external plugins.\n   The config is still there\n2a. rename *.js-files in $OMV_DOCUMENTROOT_DIR/js/omv/admin/\n2b. convert side panel items from OMV4 - OMV5\n3. move all *.deb files and local.list in $OMVAPT/\n4. move old-omvplugins.org-lists\n\nDo you want to do this?" 15 78
+[ $? = 0 ] || f_aborted
 
-whiptail --title "${TITLE}" --backtitle "${BACKTITLE}" --yesno --defaultno "To clean up your OMV-installation, the following steps are required:\n1. remove all external plugins.\n   The config is still there\n2a. rename *.js-files in $OMV_DOCUMENTROOT_DIR/js/omv/admin/\n2b. convert side panel items from OMV4 - OMV5\n3. move all *.deb files and local.list in $OMVAPT/\n4. move old-omvplugins.org-lists\n\nDo you want to do this?" 15 78
-[[ $? = 0 ]] || f_aborted
+whiptail --title "$TITLE" --backtitle "$BACKTITLE" --yesno --defaultno "You are using this script at your own risk!\n\nAre you ready to reinstall OMV if something goes wrong or this script isn't working as expected?" 11 78
+[ $? = 0 ] || f_aborted
 
-whiptail --title "${TITLE}" --backtitle "${BACKTITLE}" --yesno --defaultno "You are using this script at your own risk!\n\nAre you ready to reinstall OMV if something goes wrong or this script isn't working as expected?" 11 78
-[[ $? = 0 ]] || f_aborted
-
-whiptail --title "${TITLE}" --backtitle "${BACKTITLE}" --yesno --defaultno "You know, what you are doing?\n\nLogfile is $OMVLOGFILE" 8 78
-[[ $? = 0 ]] || f_aborted
+whiptail --title "$TITLE" --backtitle "$BACKTITLE" --yesno --defaultno "You know, what you are doing?\n\nLogfile is $OMVLOGFILE" 8 78
+[ $? = 0 ] || f_aborted
 
 f_log "Cleaning started - $SCRIPTDATE"
 f_log ""
