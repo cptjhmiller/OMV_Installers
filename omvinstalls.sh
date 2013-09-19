@@ -2881,19 +2881,21 @@ echo
 echo "Downloading and installing PyLoad.......";
 echo "This one takes some time, please wait...";
 wget http://download.pyload.org/pyload-cli-v0.4.9-all.deb > /dev/null 2>&1
-dpkg -i pyload-cli-v0.4.9-all.deb > /dev/null 2>&1
+#dpkg -i pyload-cli-v0.4.9-all.deb > /dev/null 2>&1
 t=10
 echo -ne 10%           \\r
-appinstall="tesseract-orc liblcms1 python-imaging python-openssl python-crypto python-pycurl python-central libgmp3c2 libjpeg62"
-for item in ${appinstall[@]}; do
-	echo -ne $t%           \\r
-	if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
-		/usr/bin/apt-get -qq install  "$item"
-		t=$(($t + 25))
-	else
-		t=$(($t + 25))
-	fi
-done
+#appinstall="tesseract-orc"
+apt-get -qq install liblcms1 libgmp3c2 libjpeg62 python-central python-imaging python-openssl python-crypto python-pycurl > /dev/null 2>&1
+apt-get install -f > /dev/null 2>&1
+#for item in ${appinstall[@]}; do
+#	echo -ne $t%           \\r
+#	if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
+#		/usr/bin/apt-get -qq install  "$item"
+#		t=$(($t + 25))
+#	else
+#		t=$(($t + 25))
+#	fi
+#done
 dpkg -i  pyload-cli-v0.4.9-all.deb > /dev/null 2>&1
 echo "Setting up startup options"
 echo '#!/bin/sh
