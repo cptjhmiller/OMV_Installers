@@ -192,9 +192,12 @@ for item in ${sidepanel[@]}; do
  * @derived OMV.workspace.panel.Panel
  */
 Ext.define("OMV.module.admin.service.'${item}'.'${item}'", {
-initComponent: function() {
-        window.open("'${address}'","_blank")
-}
+        extend: "OMV.workspace.panel.Panel",
+                initComponent: function() {
+                        var me = this;
+                        window.open("'${address}'","_blank")
+                        me.callParent(arguments);
+                }
 });
 
 OMV.WorkspaceManager.registerNode({
@@ -3982,9 +3985,12 @@ if QUESTION; then
  * @derived OMV.workspace.panel.Panel
  */
 Ext.define("OMV.module.admin.service.'${service}'.'${service}'", {
-initComponent: function() {
-        window.open("'${address}'","_blank")
-}
+        extend: "OMV.workspace.panel.Panel",
+                initComponent: function() {
+                        var me = this;
+                        window.open("'${address}'","_blank")
+                        me.callParent(arguments);
+                }
 });
 
 OMV.WorkspaceManager.registerNode({
