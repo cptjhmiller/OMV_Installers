@@ -2881,7 +2881,7 @@ wget http://download.pyload.org/pyload-cli-v0.4.9-all.deb > /dev/null 2>&1
 dpkg -i pyload-cli-v0.4.9-all.deb > /dev/null 2>&1
 t=10
 echo -ne 10%           \\r
-appinstall="tesseract-orc python-imaging python-openssl"
+appinstall="tesseract-orc liblcms1 python-imaging python-openssl python-crypto python-pycurl python-central libgmp3c2 libjpeg62"
 for item in ${appinstall[@]}; do
 	echo -ne $t%           \\r
 	if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
