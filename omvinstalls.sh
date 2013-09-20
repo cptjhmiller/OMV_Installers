@@ -40,7 +40,6 @@ C_FILE=/etc/millers.cfg
 PREFIX=MILLERSCONFIG
 if [ ! -e $C_FILE ]; then
         IP=`ifconfig | grep "inet addr:" | head -n 1  | cut -d':' -f2 | cut -d' ' -f1`
-
         echo 'MILLERSCONFIG1=/
 MILLERSCONFIG2='${IP}'
 MILLERSCONFIG3=n' > $C_FILE
