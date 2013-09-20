@@ -86,11 +86,11 @@ f_log() {
 
 Clean()
 {
-# Modified clean script
-# Converts side menu icons from OMV4 to OMV5
-# Cleaning script to update OMV savely from 0.4 to 0.5
+## Cleaning script to update OMV savely from 0.4 to 0.5
+
 # R. Lindlein aka Solo0815 in the OMV-Forums
-# v 0.7.7
+# v 0.8.0
+
 # Bugs fixed / features added:
 # - typo
 # - added removing js-files from jhmiller's script
@@ -101,8 +101,10 @@ Clean()
 # - added purging of the website plugin and omv-plugins.org
 # - added moving millers.list because the containing linux-mint entries it gave errors with OMV 0.5 
 # - added removing other stuff from http://forums.openmediavault.org/viewtopic.php?f=14&t=2262&start=10#p15824
-# - moved from sh to bash -> should resolve some errors with [[ ]]
+# - moved from sh to bash -> should resolve some errors with [[ ]] - changed it to single [
+# - added code to get local.list back
 ###########################################################################################
+
 
 SCRIPTDATE="$(date +%y%m%d-%H%M%S)"
 TITLE="Clean OMV to upgrade from 0.4 to 0.5"
@@ -116,15 +118,16 @@ OLDJSEXT="_omv0.4_$SCRIPTDATE"
 ### Begin of script
 
 echo
-whiptail --title "$TITLE" --backtitle "$BACKTITLE" --msgbox "This script will clean your OMV-Installation, so that you can upgrade from 0.4 to 0.5\n\nPlease read the following instructions carefully!" 11 78
 
-whiptail --title "$TITLE" --backtitle "$BACKTITLE" --yesno --defaultno "To clean up your OMV-installation, the following steps are required:\n1. remove all external plugins.\n   The config is still there\n2a. rename *.js-files in $OMV_DOCUMENTROOT_DIR/js/omv/admin/\n2b. convert side panel items from OMV4 - OMV5\n3. move all *.deb files and local.list in $OMVAPT/\n4. move old-omvplugins.org-lists\n\nDo you want to do this?" 15 78
+whiptail --title "${TITLE}" --backtitle "${BACKTITLE}" --msgbox "This script will clean your OMV-Installation, so that you can upgrade from 0.4 to 0.5\n\nPlease read the following instructions carefully!" 11 78
+
+whiptail --title "${TITLE}" --backtitle "${BACKTITLE}" --yesno --defaultno "To clean up your OMV-installation, the following steps are required:\n1. remove all external plugins.\n   The config is still there\n2. rename *.js-files in $OMV_DOCUMENTROOT_DIR/js/omv/module and admin/\n3. move all *.deb files and local.list in $OMVAPT/\n4. move old-omvplugins.org-lists\n\nDo you want to do this?" 15 78
 [ $? = 0 ] || f_aborted
 
-whiptail --title "$TITLE" --backtitle "$BACKTITLE" --yesno --defaultno "You are using this script at your own risk!\n\nAre you ready to reinstall OMV if something goes wrong or this script isn't working as expected?" 11 78
+whiptail --title "${TITLE}" --backtitle "${BACKTITLE}" --yesno --defaultno "You are using this script at your own risk!\n\nAre you ready to reinstall OMV if something goes wrong or this script isn't working as expected?" 11 78
 [ $? = 0 ] || f_aborted
 
-whiptail --title "$TITLE" --backtitle "$BACKTITLE" --yesno --defaultno "You know, what you are doing?\n\nLogfile is $OMVLOGFILE" 8 78
+whiptail --title "${TITLE}" --backtitle "${BACKTITLE}" --yesno --defaultno "You know, what you are doing?\n\nLogfile is $OMVLOGFILE" 8 78
 [ $? = 0 ] || f_aborted
 
 f_log "Cleaning started - $SCRIPTDATE"
@@ -192,12 +195,12 @@ for item in ${sidepanel[@]}; do
  * @derived OMV.workspace.panel.Panel
  */
 Ext.define("OMV.module.admin.service.'${item}'.'${item}'", {
-        extend: "OMV.workspace.panel.Panel",
-                initComponent: function() {
-                        var me = this;
-                        window.open("'${address}'","_blank")
-                        me.callParent(arguments);
-                }
+        extend: "Ext.panel.Panel",
+        initComponent: function() {
+                var me = this;
+                window.open("'${address}'","blank")
+                me.callParent(Ext.panel.panel);
+        },
 });
 
 OMV.WorkspaceManager.registerNode({
@@ -208,7 +211,6 @@ OMV.WorkspaceManager.registerNode({
 });
 
 OMV.WorkspaceManager.registerPanel({
-        id: "settings",
         path: "/service/'${item}'",
         className: "OMV.module.admin.service.'${item}'.'${item}'"
 });
@@ -253,6 +255,7 @@ fi
 
 if ls $OMVAPT/openmediavault-local.list >/dev/null 2>&1; then
 	mv $OMVAPT/openmediavault-local.list $OMVFOLDER_DEBS && f_log "moved $OMVAPT/openmediavault-local.list to $OMVFOLDER_DEBS"
+	echo "deb file:$OMV_CACHE_DIR/archives /" > $OMVAPT/openmediavault-local.list && f_log "created a new $OMVAPT/openmediavault-local.list"
 else
 	f_log "No file: $OMVAPT/openmediavault-local.list found. Nothing to do here!"
 fi
@@ -291,10 +294,7 @@ f_log ""
 f_log "The cleaning of OMV 0.4 for upgrading to 0.5 was successfull! Please reboot. Then you can upgrade to 0.5 at your own risk via \"omv-release upgrade\""
 echo
 echo "The logfile is $OMVLOGFILE"
-
-exit 0
 menu;
-
 }
 
 
@@ -3987,9 +3987,12 @@ if QUESTION; then
  * @derived OMV.workspace.panel.Panel
  */
 Ext.define("OMV.module.admin.service.'${service}'.'${service}'", {
-                initComponent: function() {
-                        window.open("'${address}'","blank")
-                }
+        extend: "Ext.panel.Panel",
+        initComponent: function() {
+                var me = this;
+                window.open("'${address}'","blank")
+                me.callParent(Ext.panel.panel);
+        },
 });
 
 OMV.WorkspaceManager.registerNode({
@@ -4000,7 +4003,6 @@ OMV.WorkspaceManager.registerNode({
 });
 
 OMV.WorkspaceManager.registerPanel({
-        id: "settings",
         path: "/service/'${service}'",
         className: "OMV.module.admin.service.'${service}'.'${service}'"
 });
