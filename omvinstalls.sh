@@ -67,7 +67,7 @@ screen()
 clear;
 echo "";
 echo "    -------------------------------Millers-------------------------------";
-echo "              OpenMediaVault Multi Application Installer V1.9.2          ";
+echo "              OpenMediaVault Multi Application Installer V1.9.3          ";
 echo "";
 }
 
@@ -4225,8 +4225,10 @@ if QUESTION; then
 	echo '#! /bin/sh
 ### BEGIN INIT INFO
 # Provides:          xdm
-# Required-Start:    $all
-# Required-Stop:     $all
+# Required-Start:    $local_fs $network $remote_fs
+# Required-Stop:     $local_fs $network $remote_fs
+# Should-Start:      $NetworkManager
+# Should-Stop:       $NetworkManager
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: starts instance of xdm
