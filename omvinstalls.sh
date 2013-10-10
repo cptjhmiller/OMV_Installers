@@ -2448,52 +2448,61 @@ echo '#! /bin/sh
 # Description:       starts instance of CouchPotatoServer using start-stop-daemon
 ### END INIT INFO
 
-############### EDIT ME ##################
-# path to app
+set -e
 
-# user
+############### EDIT ME ##################
 RUN_AS='${mainuser}'
 RUN_GRP='${maingroup}'
 APP_PATH='${INSTALLDIR}'/CouchPotatoServer/
-# path to python bin
 DAEMON='${py}'
-
-# Path to store PID file
 PID_FILE=/var/run/couchpotato/server.pid
 PID_PATH=$(dirname $PID_FILE)
-
-# script name
 NAME=CouchPotatoServer
-
-# app name
 DESC=CouchPotatoServer
-
-# startup args    CouchPotato.py --daemon --pid_file=/root/.couc$
 DAEMON_OPTS=" CouchPotato.py --daemon --pid_file=${PID_FILE}"
-
 ############### END EDIT ME ##################
 
 test -x $DAEMON || exit 0
 
-set -e
+# Get lsb functions
+. /lib/lsb/init-functions
+
+# Create PID directory if not exist and ensure the CouchPotato user can write to it
+if [ ! -d $PID_PATH ]; then
+    mkdir -p $PID_PATH
+    chown $RUN_AS $PID_PATH
+fi
+
+if [ ! -d $DATA_DIR ]; then
+    mkdir -p $DATA_DIR
+    chown $RUN_AS $DATA_DIR
+fi
+
+if [ -e $PID_FILE ]; then
+    PID=`cat $PID_FILE`
+    if ! kill -0 $PID > /dev/null 2>&1; then
+        echo "Removing stale $PID_FILE"
+        rm $PID_FILE
+    fi
+fi
 
 case "$1" in
   start)
         echo "Starting $DESC"
-        rm -rf $PID_PATH || return 1
-        install -d --mode=0755 -o $RUN_AS -g $RUN_GRP $PID_PATH || return 1
-        start-stop-daemon -d $APP_PATH -c $RUN_AS --start --background --pidfile $PID_FILE --exec $DAEMON -- $DAEMON_OPTS
+        start-stop-daemon -d $APP_PATH -c $RUN_AS --start --pidfile $PID_FILE --exec $DAEMON -- $DAEMON_OPTS
         ;;
   stop)
         echo "Stopping $DESC"
         start-stop-daemon --stop --pidfile $PID_FILE --retry 15
         ;;
-
   restart|force-reload)
         echo "Restarting $DESC"
         start-stop-daemon --stop --pidfile $PID_FILE --retry 15
-        start-stop-daemon -d $APP_PATH -c $RUN_AS --start --background --pidfile $PID_FILE --exec $DAEMON -- $DAEMON_OPTS
+        start-stop-daemon -d $APP_PATH -c $RUN_AS --start --pidfile $PID_FILE --exec $DAEMON -- $DAEMON_OPTS
         ;;
+  status)
+       status_of_proc -p $PID_FILE "$DAEMON" "$NAME"
+       ;;
   *)
         N=/etc/init.d/$NAME
         echo "Usage: $N {start|stop|restart|force-reload}" >&2
