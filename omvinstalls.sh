@@ -1569,6 +1569,7 @@ sudo chmod -R a+x $INSTALLDIR/GameZ > /dev/null 2>&1
 service GameZ start > /dev/null 2>&1
 service="GameZ"
 address="http://$ip:8085"
+port=":8085"
 panel;
 echo "Finished"
 sleep 1
@@ -1715,6 +1716,7 @@ chmod -R a+x $INSTALLDIR/auto-sub > /dev/null 2>&1
 service Auto-Sub start > /dev/null 2>&1
 service="AutoSub"
 address="http://$ip:8083"
+port=":8083"
 panel;
 echo "";
 echo "Finished";
@@ -1817,6 +1819,7 @@ chmod -R a+x $INSTALLDIR/mylar > /dev/null 2>&1
 service mylar start > /dev/null 2>&1
 service="MyLar"
 address="http://$ip:8090"
+port=":8090"
 panel;
 echo "";
 echo "Finished";
@@ -1948,6 +1951,7 @@ chmod -R 777 $INSTALLDIR/headphones > /dev/null 2>&1
 service headphones start > /dev/null 2>&1
 service="HeadPhones"
 address="http://$ip:8181"
+port=":8181"
 panel;
 echo "";
 echo "Finished";
@@ -2093,6 +2097,7 @@ chmod -R a+x $INSTALLDIR/sickbeard > /dev/null 2>&1
 service sickbeard start > /dev/null 2>&1
 service="SickBeard"
 address="http://$ip:8081"
+port=":8081"
 panel;
 echo "";
 echo "Finished";
@@ -2138,6 +2143,7 @@ rm subsonic-4.8.deb
 if [ "$mc" == "0" ]; then
 	service="SubSonic"
 	address="http://$ip:4040"
+	port=":4040"
 	panel;
 	echo "";
 	echo "Finished";
@@ -2176,6 +2182,7 @@ chmod -R ga+w /var/www/openmediavault/bbs > /dev/null 2>&1
 #chmod 777 -R /var/www/openmediavault/extplorer/ftp_tmp > /dev/null 2>&1
 service="BicBucStriim"
 address="http://$ip/bbs"
+port="/bbs"
 panel;
 echo "";
 echo "Finished";
@@ -2224,6 +2231,7 @@ $GLOBALS["users"]=array(
 #cat /usr/share/doc/extplorer/example.dot.htusers.php >/etc/extplorer/.htusers.php
 service="Extplorer"
 address="http://$ip/extplorer"
+port="/extplorer"
 panel;
 echo "";
 echo "Finished";
@@ -2388,6 +2396,7 @@ chmod -R a+x $INSTALLDIR/CouchPotato > /dev/null 2>&1
 service CouchPotato start > /dev/null 2>&1
 service="CouchPotato"
 address="http://$ip:5000"
+port=":5000"
 panel;
 echo "";
 echo "Finished";
@@ -2528,6 +2537,7 @@ if [ -d $INSTALLDIR/CouchPotatoServer ]; then
 fi
 service="CouchPotatoServer"
 address="http://$ip:5050"
+port=":5050"
 panel;
 echo "";
 echo "Finished";
@@ -2714,6 +2724,7 @@ chmod -R a+x $INSTALLDIR/SABnzbd > /dev/null 2>&1
 service SABnzbd start > /dev/null 2>&1
 service="SABnzbd"
 address="http://$ip:8080"
+port=":8080"
 panel;
 echo "";
 echo "Finished";
@@ -2871,6 +2882,7 @@ chmod -R a+x $INSTALLDIR/LazyLibrarian > /dev/null 2>&1
 service LazyLibrarian start > /dev/null 2>&1
 service="LazyLibrarian"
 address="http://$ip:5299"
+port=":5299"
 panel;
 echo "";
 echo "Finished";
@@ -3067,6 +3079,7 @@ update-rc.d pyload defaults > /dev/null 2>&1
 service pyload start > /dev/null 2>&1
 service="PyLoad"
 address="http://$ip:8888"
+port=":8888"
 panel;
 echo "";
 echo "Finished";
@@ -3280,6 +3293,7 @@ update-rc.d deluge-daemon defaults > /dev/null 2>&1
 /etc/init.d/deluge-daemon start > /dev/null 2>&1
 service="Deluge"
 address="http://$ip:8112"
+port=":8112"
 panel;
 echo "";
 echo "Finished";
@@ -3421,6 +3435,7 @@ update-rc.d maraschino defaults > /dev/null 2>&1
 /etc/init.d/maraschino start > /dev/null 2>&1
 service="Maraschino"
 address="http://$ip:9999"
+port=":9999"
 panel;
 echo "";
 echo "Finished";
@@ -3620,6 +3635,7 @@ else
 	service subsonic start
 	service="MusicCabinet"
 	address="http://$ip:4040"
+	port=":4040"
 	panel;
 	rm -fR /var/www/openmediavault/images/SubSonic.png > /dev/null 2>&1
 	rm -fR /var/www/openmediavault/js/omv/module/SubSonic.js > /dev/null 2>&1
@@ -3986,33 +4002,29 @@ if QUESTION; then
 	if [ $OMV_V -gt 4 ]; then
 		mkdir -p /var/www/openmediavault/js/omv/module/admin/service/${service}
 		echo '/**
- * This file is not part of OpenMediaVault.
+ * This file was made via jhmillers script. Thanks to mitchtay
  */
-// require("js/omv/WorkspaceManager.js")
-// require("js/omv/workspace/form/Panel.js")
-/**
- * @class OMV.module.admin.service.'${service}'.'${service}'
- * @derived OMV.workspace.panel.Panel
- */
-Ext.define("OMV.module.admin.service.'${service}'.'${service}'", {
-        extend: "Ext.panel.Panel",
+Ext.define("OMV.module.admin.service.'${service}'", {
+        extend: "OMV.workspace.panel.Panel",
+
         initComponent: function() {
                 var me = this;
-                window.open("'${address}'","blank")
-                me.callParent(Ext.panel.panel);
-        },
-});
+                var link = window.location.origin + "'${port}'";
 
+                me.html = "<form style='\''overflow: auto; height: 100%;'\''>";
+                me.html += "  <iframe src='\''" + link + "'\'' name='\''webclient'\'' longsec='\'''${service}' Web Client'\'' width='\''100%'\'' height='\''100%'\''/>";
+                me.html += "<br/></form>";
+
+                me.callParent(arguments);
+        }
+
+});
 OMV.WorkspaceManager.registerNode({
         id: "'${service}'",
         path: "/service",
         text: _("'${service}'"),
         icon16: "images/'${service}'.png",
-});
-
-OMV.WorkspaceManager.registerPanel({
-        path: "/service/'${service}'",
-        className: "OMV.module.admin.service.'${service}'.'${service}'"
+        className: "OMV.module.admin.service.'${service}'"
 });
 ' > /var/www/openmediavault/js/omv/module/admin/service/$service/$service.js
 			if ! [ -e /var/www/openmediavault/images/$service.png ]; then
@@ -4022,34 +4034,21 @@ OMV.WorkspaceManager.registerPanel({
 			fi
 	elif [ $OMV_V -lt 5 ]; then
 		echo		'/**
- * This file is not part of OpenMediaVault.
+ * This file was made via jhmillers script. Thanks to mitchtay
  */
-// require("js/omv/NavigationPanel.js")
-
 Ext.ns("OMV.Module.Services");
-
-// Register the menu.
 OMV.NavigationPanelMgr.registerMenu("services", "'${service}'", {
         text: _("'${service}'"),
         icon: "images/'${service}'.png",
         position: 10
 });
-
-/**
- * @class OMV.Module.Services.'${service}'
- * @derived Ext.Panel
- */
 OMV.Module.Services.'${service}' = function(config) {
-window.open("'${address}'","_blank")
-        var initialConfig = {
-                border: false
-        };
-        Ext.apply(initialConfig, config);
-        OMV.Module.Services.'${service}'.superclass.constructor.call(this,
-          initialConfig);
+        var link = window.location.origin + "'${port}'";
+
+        this.html = "<form style='\''overflow: auto; height: 100%;'\''>";
+        this.html += "  <iframe src='\''" + link + "'\'' name='\''webclient'\'' longsec='\'''${service}' Web Client'\'' width='\''100%'\'' height='\''100%'\''/>";
+        this.html += "<br/></form>";
 };
-Ext.extend(OMV.Module.Services.'${service}', Ext.Panel, {
-});
 OMV.NavigationPanelMgr.registerPanel("services", "'${service}'", {
         cls: OMV.Module.Services.'${service}'
 });' > /var/www/openmediavault/js/omv/module/$service.js
@@ -4307,6 +4306,7 @@ exit 0' > /etc/init.d/xdm
 	service xdm start > /dev/null 2>&1
 	service="XDM"
 	address="http://$ip:8085"
+	port=":8085"
 	panel;
 	echo "";
 	echo "Finished";
