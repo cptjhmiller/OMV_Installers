@@ -67,7 +67,7 @@ screen()
 clear;
 echo "";
 echo "    -------------------------------Millers-------------------------------";
-echo "              OpenMediaVault Multi Application Installer V1.9.3          ";
+echo "              OpenMediaVault Multi Application Installer V1.9.4          ";
 echo "";
 }
 
@@ -3794,7 +3794,11 @@ echo -ne $t%           \\r
 
 echo mysql-server mysql-server/root_password password $mypass | sudo debconf-set-selections
 echo mysql-server mysql-server/root_password_again password $mypass | sudo debconf-set-selections
-appinstall="openmediavault-mysql php-apc php5-cli php5-curl php5-gmp php5-gd php5-mcrypt php5-sqlite php-pear axel bwm-ng curl dnsutils ethtool htop iotop iperf mtr-tiny ntp psmisc rsnapshot rsync screen unrar unzip zip make g++ checkinstall libmysqlclient-dev python-mysqldb mysql-server mysql-client libmysqlclient-dev python-pip python-setuptools php5-fpm php5-svn"
+if [ $OMV_V -gt 4 ]; then
+	appinstall="mysql php-apc php5-cli php5-curl php5-gmp php5-gd php5-mcrypt php5-sqlite php-pear axel bwm-ng curl dnsutils ethtool htop iotop iperf mtr-tiny ntp psmisc rsnapshot rsync screen unrar unzip zip make g++ checkinstall libmysqlclient-dev python-mysqldb mysql-server mysql-client libmysqlclient-dev python-pip python-setuptools php5-fpm php5-svn"
+else
+	appinstall="openmediavault-mysql php-apc php5-cli php5-curl php5-gmp php5-gd php5-mcrypt php5-sqlite php-pear axel bwm-ng curl dnsutils ethtool htop iotop iperf mtr-tiny ntp psmisc rsnapshot rsync screen unrar unzip zip make g++ checkinstall libmysqlclient-dev python-mysqldb mysql-server mysql-client libmysqlclient-dev python-pip python-setuptools php5-fpm php5-svn"
+fi
 for item in ${appinstall[@]}; do
 	echo -ne $t%           \\r
 		if [ ! -f /var/lib/dpkg/info/"$item".list ]; then
