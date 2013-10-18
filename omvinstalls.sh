@@ -3625,7 +3625,7 @@ else
 		sudo apt-key add -
 	/usr/bin/apt-get --quiet --quiet update
 	#apt-get install postgresql-9.2 #
-	/usr/bin/apt-get -qq install  postgresql-contrib-9.2
+	/usr/bin/apt-get install -qq -t squeeze-pgdg postgresql-contrib-9.3
 	sudo -u postgres psql -c"ALTER user postgres WITH PASSWORD '1234'"
 	sudo service postgresql restart > /dev/null 2>&1
 	echo 'MusicCabinetJDBCPassword=31323334' > /var/subsonic/subsonic.properties
