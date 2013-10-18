@@ -1974,7 +1974,7 @@ echo
 if [ "$sbm" == "1" ]; then
 	echo "                           MASTER BRANCH"
 	echo "Downloading and installing SickBeard....";
-	git clone git://github.com/midgetspy/Sick-Beard.git new_SB > /dev/null
+	git clone git://github.com/midgetspy/Sick-Beard.git -b master new_SB > /dev/null
 	ret=$?
 	if ! test "$ret" -eq 0; then
 		echo >&2 "git clone SickBeard failed with exit status $ret"
