@@ -67,7 +67,7 @@ screen()
 clear;
 echo "";
 echo "    -------------------------------Millers-------------------------------";
-echo "              OpenMediaVault Multi Application Installer V1.9.4          ";
+echo "              OpenMediaVault Multi Application Installer V1.9.5          ";
 echo "";
 }
 
@@ -4009,7 +4009,7 @@ if QUESTION; then
  * This file was made via jhmillers script. Thanks to mitchtay
  */
 Ext.define("OMV.module.admin.service.'${service}'", {
-        extend: "OMV.workspace.panel.Panel",
+        extend: "Ext.panel.Panel",
 
         initComponent: function() {
                 var me = this;
