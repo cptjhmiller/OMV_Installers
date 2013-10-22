@@ -392,6 +392,7 @@ cd Babel-0.9.6
 /usr/local/bin/python2.7 setup.py install
 cd /
 rm -Rf /tmp/Python-2.7.5
+menu;
 }
 
 changeip()
@@ -1044,6 +1045,10 @@ changelocation;
 # Clean OMV4 - OMV5
 clean)
 Clean;
+;;
+# Install python2.7
+python)
+install_PYTHON;
 ;;
 Q|q)
 exit
@@ -3795,9 +3800,9 @@ echo -ne $t%           \\r
 echo mysql-server mysql-server/root_password password $mypass | sudo debconf-set-selections
 echo mysql-server mysql-server/root_password_again password $mypass | sudo debconf-set-selections
 if [ $OMV_V -gt 4 ]; then
-	appinstall="mysql php-apc php5-cli php5-curl php5-gmp php5-gd php5-mcrypt php5-sqlite php-pear axel bwm-ng curl dnsutils ethtool htop iotop iperf mtr-tiny ntp psmisc rsnapshot rsync screen unrar unzip zip make g++ checkinstall libmysqlclient-dev python-mysqldb mysql-server mysql-client libmysqlclient-dev python-pip python-setuptools php5-fpm php5-svn"
+	appinstall="php-apc php5-cli php5-curl php5-gmp php5-gd php5-mcrypt php5-sqlite php-pear axel bwm-ng curl dnsutils ethtool htop iotop iperf mtr-tiny ntp psmisc rsnapshot rsync screen unrar unzip zip make g++ checkinstall libmysqlclient-dev python-mysqldb mysql-server mysql-client libmysqlclient-dev python-pip python-setuptools php5-fpm php5-svn php5-mysql"
 else
-	appinstall="openmediavault-mysql php-apc php5-cli php5-curl php5-gmp php5-gd php5-mcrypt php5-sqlite php-pear axel bwm-ng curl dnsutils ethtool htop iotop iperf mtr-tiny ntp psmisc rsnapshot rsync screen unrar unzip zip make g++ checkinstall libmysqlclient-dev python-mysqldb mysql-server mysql-client libmysqlclient-dev python-pip python-setuptools php5-fpm php5-svn"
+	appinstall="openmediavault-mysql php-apc php5-cli php5-curl php5-gmp php5-gd php5-mcrypt php5-sqlite php-pear axel bwm-ng curl dnsutils ethtool htop iotop iperf mtr-tiny ntp psmisc rsnapshot rsync screen unrar unzip zip make g++ checkinstall libmysqlclient-dev python-mysqldb mysql-server mysql-client libmysqlclient-dev python-pip python-setuptools php5-fpm php5-svn php5-mysql"
 fi
 for item in ${appinstall[@]}; do
 	echo -ne $t%           \\r
