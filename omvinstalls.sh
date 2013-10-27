@@ -348,51 +348,54 @@ fi
 
 install_PYTHON()
 {
-t=9
-appinstall="build-essential libsqlite3-dev libssl-dev ncurses-dev libreadline5-dev libncursesw5-dev libgdbm-dev libbz2-dev libc6-dev tk-dev libdb4.6-dev tk8.5 tk8.5-dev"
-for item in ${appinstall[@]}; do
-	echo -ne $t%           \\r
-		if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
-			/usr/bin/apt-get -qq install "$item" > /dev/null 2>&1
-			t=$(($t + 7))
-		else
-			t=$(($t + 7))
-		fi
-done
-cd /tmp
-wget http://www.python.org/ftp/python/2.7.5/Python-2.7.5.tgz
-tar zxvf Python-2.7.5.tgz
-rm -f Python-2.7.5.tgz
-cd Python-2.7.5
-./configure
-make altinstall
-rm -f /usr/bin/python2.7-config
-rm -f /usr/bin/python2.7
-ln -s /usr/local/bin/python2.7 /usr/bin/python2.7
-ln -s /usr/local/bin/python2.7-config /usr/bin/python2.7-config
-wget http://pypi.python.org/packages/source/C/Cheetah/Cheetah-2.4.4.tar.gz --no-check-certificate
-tar zxvf Cheetah-2.4.4.tar.gz
-cd Cheetah-2.4.4
-/usr/local/bin/python2.7 setup.py install
-wget https://pypi.python.org/packages/source/s/setuptools/setuptools-0.9.tar.gz --no-check-certificate
-tar zxvf setuptools-0.9.tar.gz
-cd setuptools-0.9
-/usr/local/bin/python2.7 setup.py install
-wget https://pypi.python.org/packages/source/p/pip/pip-1.4.tar.gz --no-check-certificate
-tar xzf pip-1.4.tar.gz
-cd pip-1.4
-/usr/local/bin/python2.7 setup.py install
-wget http://sabnzbd.sourceforge.net/yenc-0.3.tar.gz
-tar zxf yenc-0.3.tar.gz
-cd yenc-0.3
-/usr/local/bin/python2.7 setup.py install   # Need to do this as admin
-wget http://ftp.edgewall.com/pub/babel/Babel-0.9.6.tar.gz
-tar xzf Babel-0.9.6.tar.gz
-cd Babel-0.9.6
-/usr/local/bin/python2.7 setup.py install
-cd /
-rm -Rf /tmp/Python-2.7.5
-menu;
+if [ ! -e /usr/bin/python2.7 ]; then
+	t=9
+	appinstall="build-essential libsqlite3-dev libssl-dev ncurses-dev libreadline5-dev libncursesw5-dev libgdbm-dev libbz2-dev libc6-dev tk-dev libdb4.6-dev tk8.5 tk8.5-dev"
+	for item in ${appinstall[@]}; do
+		echo -ne $t%           \\r
+			if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
+				/usr/bin/apt-get -qq install "$item" > /dev/null 2>&1
+				t=$(($t + 7))
+			else
+				t=$(($t + 7))
+			fi
+	done
+	cd /tmp
+	wget http://www.python.org/ftp/python/2.7.5/Python-2.7.5.tgz
+	tar zxvf Python-2.7.5.tgz
+	rm -f Python-2.7.5.tgz
+	cd Python-2.7.5
+	./configure
+	make altinstall
+	rm -f /usr/bin/python2.7-config
+	rm -f /usr/bin/python2.7
+	ln -s /usr/local/bin/python2.7 /usr/bin/python2.7
+	ln -s /usr/local/bin/python2.7-config /usr/bin/python2.7-config
+	wget http://pypi.python.org/packages/source/C/Cheetah/Cheetah-2.4.4.tar.gz --no-check-certificate
+	tar zxvf Cheetah-2.4.4.tar.gz
+	cd Cheetah-2.4.4
+	/usr/local/bin/python2.7 setup.py install
+	wget https://pypi.python.org/packages/source/s/setuptools/setuptools-0.9.tar.gz --no-check-certificate
+	tar zxvf setuptools-0.9.tar.gz
+	cd setuptools-0.9
+	/usr/local/bin/python2.7 setup.py install
+	wget https://pypi.python.org/packages/source/p/pip/pip-1.4.tar.gz --no-check-certificate
+	tar xzf pip-1.4.tar.gz
+	cd pip-1.4
+	/usr/local/bin/python2.7 setup.py install
+	wget http://sabnzbd.sourceforge.net/yenc-0.3.tar.gz
+	tar zxf yenc-0.3.tar.gz
+	cd yenc-0.3
+	/usr/local/bin/python2.7 setup.py install   # Need to do this as admin
+	wget http://ftp.edgewall.com/pub/babel/Babel-0.9.6.tar.gz
+	tar xzf Babel-0.9.6.tar.gz
+	cd Babel-0.9.6
+	/usr/local/bin/python2.7 setup.py install
+	cd /
+	rm -Rf /tmp/Python-2.7.5
+else
+	echo "Python2.7 has been found, skipping compiling.";
+fi
 }
 
 changeip()
@@ -1365,6 +1368,10 @@ if [ "$MILLERSCONFIG3" == "n" ]; then
 			rm openmediavault-omvpluginsorg_0.4.2-10~1.gbpefc0a1_all.deb > /dev/null 2>&1
 			echo -ne 26%           \\r
 		elif [ "$OMV_V" == "5" ]; then
+			echo -ne 26%           \\r
+			wget http://omv-extras.org/debian/pool/main/o/openmediavault-omvextrasorg/openmediavault-omvextrasorg_0.5.15_all.deb > /dev/null 2>&1
+			dpkg -i openmediavault-omvextrasorg_0.5.15_all.deb > /dev/null 2>&1
+			rm openmediavault-omvextrasorg_0.5.15_all.deb > /dev/null 2>&1
 			echo -ne 26%           \\r
 		fi
 	fi
@@ -3675,14 +3682,14 @@ if QUESTION; then
 	RUNNING=`expr "$(uname -m)"`
 	if [ "$RUNNING" == "x86_64" ]; then
 		cd /tmp > /dev/null 2>&1
-		wget http://ftp.us.debian.org/debian/pool/main/e/eglibc/multiarch-support_2.13-38_amd64.deb > /dev/null 2>&1
-		dpkg -i multiarch-support_2.13-38_amd64.deb > /dev/null 2>&1
-		rm multiarch-support_2.13-38_amd64.deb > /dev/null 2>&1
+		wget http://ftp.us.debian.org/debian/pool/main/e/eglibc/multiarch-support_2.17-93_amd64.deb > /dev/null 2>&1
+		dpkg -i multiarch-support_2.17-93_amd64.deb > /dev/null 2>&1
+		rm multiarch-support_2.17-93_amd64.deb > /dev/null 2>&1
 	elif [ "$RUNNING" == "i686" ]; then
 		cd /tmp > /dev/null 2>&1
-		wget http://ftp.us.debian.org/debian/pool/main/e/eglibc/multiarch-support_2.13-38_i386.deb > /dev/null 2>&1
-		dpkg -i multiarch-support_2.13-38_i386.deb > /dev/null 2>&1
-		rm multiarch-support_2.13-38_i386.deb > /dev/null 2>&1
+		wget http://ftp.us.debian.org/debian/pool/main/e/eglibc/multiarch-support_2.17-93_i386.deb > /dev/null 2>&1
+		dpkg -i multiarch-support_2.17-93_i386.deb > /dev/null 2>&1
+		rm multiarch-support_2.17-93_i386.deb > /dev/null 2>&1
 	fi
 	t=0
 	echo -ne $t%           \\r
@@ -3692,7 +3699,7 @@ if QUESTION; then
 		/usr/bin/apt-get -qq remove "$item" > /dev/null 2>&1
 		t=$(($t + 3))
 	done
-	appinstall="nasm gettext automake autoconf build-essential checkinstall git libfaac-dev libass-dev libgpac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev librtmp-dev libsdl1.2-dev libtheora-dev libtool libvorbis-dev pkg-config texi2html yasm zlib1g-dev libjack-jackd2-dev libva-dev libvdpau-dev libx11-dev libxfixes-dev libdirac-dev libxvidcore-dev mediainfo"
+	appinstall="nasm gettext automake autoconf build-essential checkinstall git libfaac-dev libass-dev libgpac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev librtmp-dev libsdl1.2-dev libtheora-dev libtool libvorbis-dev pkg-config texi2html yasm zlib1g-dev libjack-jackd2-dev libva-dev libvdpau-dev libx11-dev libxfixes-dev libdirac-dev libxvidcore-dev mediainfo libgpac2 libjpeg8 libssl-dev"
 	for item in ${appinstall[@]}; do
 		echo -ne $t%           \\r
 			if [ ! -f /var/lib/dpkg/info/"$item".list ]; then
@@ -3754,7 +3761,7 @@ if QUESTION; then
 	#FFmpeg
 	git clone --depth 1 git://source.ffmpeg.org/ffmpeg
 	cd /tmp/ffmpeg
-	./configure --enable-gpl --enable-libass --enable-libopus --enable-libfaac --enable-libfdk-aac --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-librtmp --enable-libtheora --enable-libvorbis --enable-libvpx --enable-x11grab --enable-libx264 --enable-nonfree --enable-version3 --enable-libxvid --enable-postproc
+	./configure --enable-gpl --enable-libass --enable-libopus --enable-libfaac --enable-libfdk-aac --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-librtmp --enable-libtheora --enable-libvorbis --enable-libvpx --enable-x11grab --enable-libx264 --enable-nonfree --enable-version3 --enable-libxvid --enable-postproc --extra-ldflags=-ldl
 	make
 	checkinstall --pkgname=ffmpeg --pkgversion="7:$(date +%Y%m%d%H%M)-git" --backup=no --deldoc=yes --fstrans=no --default
 	hash x264 ffmpeg ffplay ffprobe
