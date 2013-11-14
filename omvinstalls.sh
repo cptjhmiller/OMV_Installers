@@ -361,10 +361,10 @@ if [ ! -e /usr/bin/python2.7 ]; then
 			fi
 	done
 	cd /tmp
-	wget http://www.python.org/ftp/python/2.7.5/Python-2.7.5.tgz
-	tar zxvf Python-2.7.5.tgz
-	rm -f Python-2.7.5.tgz
-	cd Python-2.7.5
+	wget http://www.python.org/ftp/python/2.7.6/Python-2.7.6.tgz
+	tar zxvf Python-2.7.6.tgz
+	rm -f Python-2.7.6.tgz
+	cd Python-2.7.6
 	./configure
 	make altinstall
 	rm -f /usr/bin/python2.7-config
@@ -392,7 +392,7 @@ if [ ! -e /usr/bin/python2.7 ]; then
 	cd Babel-0.9.6
 	/usr/local/bin/python2.7 setup.py install
 	cd /
-	rm -Rf /tmp/Python-2.7.5
+	rm -Rf /tmp/Python-2.7.6
 else
 	echo "Python2.7 has been found, skipping compiling.";
 fi
