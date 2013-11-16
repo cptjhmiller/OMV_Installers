@@ -1877,7 +1877,7 @@ exit 0' > /etc/init.d/HTPC_Manager
 	service HTPC_Manager stop > /dev/null 2>&1
 	chmod -R a+x $INSTALLDIR/HTPC_Manager > /dev/null 2>&1
 	service HTPC_Manager start > /dev/null 2>&1
-	service="HTPC Manager"
+	service="HTPC_Manager"
 	address="http://$ip:8089"
 	port=":8089"
 	panel;
