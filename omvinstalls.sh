@@ -472,6 +472,20 @@ rm -fR /var/www/openmediavault/js/omv/module/SickBeard.js > /dev/null 2>&1
 rm -Rf /var/www/openmediavault/js/omv/module/admin/service/SickBeard > /dev/null 2>&1
 }
 
+Uninstall_Htpc()
+{
+uinst="1"
+echo "uninstalling................HTPC Manager"
+service HTPC_Manager stop > /dev/null 2>&1
+sleep 2
+update-rc.d -f HTPC_Manager remove > /dev/null 2>&1
+rm -fR /etc/init.d/HTPC_Manager > /dev/null 2>&1
+rm -fR $INSTALLDIR/HTPC_Manager > /dev/null 2>&1
+rm -fR /var/www/openmediavault/images/HTPC_Manager.png > /dev/null 2>&1
+rm -fR /var/www/openmediavault/js/omv/module/HTPC_Manager.js > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/js/omv/module/admin/service/HTPC_Manager > /dev/null 2>&1
+}
+
 Uninstall_HeadPhones()
 {
 uinst="1"
@@ -793,6 +807,7 @@ ml="0"
 mc="0"
 gz="0"
 bbs="0"
+htpc="0"
 uml="0"
 xdm="0"
 ucpv="0"
@@ -817,6 +832,7 @@ uexp="0"
 ugz="0"
 ubbs="0"
 uxdm="0"
+uhtpc="0"
 #sleep 3
 cd /tmp
 #Menu & python option
@@ -838,7 +854,7 @@ echo "           8. HeadPhones (Develop)          17. Auto-Sub"
 echo "           9. Sabnzbdplus                   18. Extplorer"
 echo "          19. MyLar                         20. Music Cabinet"
 echo "          21. GameZ                         22. BicBucStriim"
-echo "                                 23. XDM"
+echo "          23. XDM                           24. HTPC Manager"
 echo ""
 echo "                                 Q. Quit"
 if [ "$INSTALLDIR" == "" ]; then
@@ -945,6 +961,10 @@ Uninstall_BicBucStriim;
 -23)
 Uninstall_XDM;
 ;;
+# Uninstall HTPC Manager
+-24)
+Uninstall_Htpc;
+;;
 # CouchPotato
 1)
 cpv="1"
@@ -1036,6 +1056,10 @@ bbs="1"
 # XDM
 23)
 xdm="1"
+;;
+# HTPC Manager
+24)
+htpc="1"
 ;;
 # Change IP address
 I|i)
@@ -1186,6 +1210,10 @@ fi
 
 if [ "$xdm" == "1" ]; then 
 	echo "               XDM";
+fi
+
+if [ "$htpc" == "1" ]; then 
+	echo "               HTPC Manager";
 fi
 
 
@@ -1488,6 +1516,10 @@ fi
 if [ "$xdm" == "1" ]; then 
 	install_XDM;
 fi
+
+if [ "$htpc" == "1" ]; then 
+	install_HTPC_Manager;
+fi
 }
 
 install_GZ()
@@ -1733,6 +1765,128 @@ panel;
 echo "";
 echo "Finished";
 sleep 1
+}
+
+install_HTPC_Manager()
+{
+service HTPC_Manager stop > /dev/null 2>&1
+screen;
+cd /tmp
+echo
+echo "    *****************You selected to install HTPC Manager****************";
+echo
+echo "Install python2.7? (it will take some time)"
+if QUESTION; then
+	install_PYTHON
+	echo "Downloading and installing HTPC Manager...";
+	t=0
+	echo -n ""
+	appinstall="libjpeg62 libjpeg62-dev libpng12-dev libfreetype6 libfreetype6-dev zlib1g-dev python-pip libpython2.6 python-dev python2.6-dev python-imaging build-essential"
+	#items=( $appinstall )
+	for item in ${appinstall[@]}; do
+		echo -ne $t%           \\r
+		if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
+			/usr/bin/apt-get -qq install "$item" > /dev/null 2>&1
+			t=$(($t + 8))
+		else
+			t=$(($t + 8))
+		fi
+	done
+	/usr/local/bin/pip-2.7 install PIL > /dev/null 2>&1
+	git clone git://github.com/styxit/HTPC-Manager.git new_HTPC > /dev/null
+	ret=$?
+	if ! test "$ret" -eq 0; then
+		echo >&2 "git clone HTPC Manager failed with exit status $ret"
+		exit 1
+	fi
+	if [ -d $INSTALLDIR/HTPC_Manager ]; then
+		cp -fRa /tmp/new_HTPC/. $INSTALLDIR/HTPC_Manager
+		rm -fR /tmp/new_HTPC
+	else
+		mv /tmp/new_HTPC $INSTALLDIR/HTPC_Manager
+	fi
+	echo "Setting up startup options"
+	echo '#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          htpc_manager
+# Required-Start:    $local_fs $network $remote_fs
+# Required-Stop:     $local_fs $network $remote_fs
+# Should-Start:      $NetworkManager
+# Should-Stop:       $NetworkManager
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts instance of htpc_manager
+# Description:       starts instance of htpc_manager using start-stop-daemon
+### END INIT INFO
+
+############### EDIT ME ##################
+# startup args
+DAEMON_OPTS="Htpc.py --daemon --port 8089"
+
+# script name
+NAME=HTPC_Manager
+
+# app name
+DESC=HTPC_Manager
+
+# user
+RUN_AS='${mainuser}'
+# path to app
+APP_PATH='${INSTALLDIR}'/HTPC_Manager
+# path to python bin
+DAEMON=/usr/local/bin/python2.7
+PID_FILE=/var/run/HTPC_Manager.pid
+
+############### END EDIT ME ##################
+
+test -x $DAEMON || exit 0
+
+set -e
+
+case "$1" in
+  start)
+        echo "Starting $DESC"
+        start-stop-daemon -d $APP_PATH -c $RUN_AS --start --pidfile $PID_FILE  --make-pidfile --exec $DAEMON -- $DAEMON_OPTS
+        ;;
+  stop)
+        echo "Stopping $DESC"
+        start-stop-daemon --stop --pidfile $PID_FILE | rm -rf $PID_FILE
+        ;;
+
+  restart|force-reload)
+        echo "Restarting $DESC"
+        start-stop-daemon --stop --pidfile $PID_FILE
+        sleep 15
+        start-stop-daemon -d $APP_PATH -c $RUN_AS --start --pidfile $PID_FILE  --make-pidfile --exec $DAEMON -- $DAEMON_OPTS
+        ;;
+  *)
+        N=/etc/init.d/$NAME
+        echo "Usage: $N {start|stop|restart|force-reload}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0' > /etc/init.d/HTPC_Manager
+	chmod 755 /etc/init.d/HTPC_Manager > /dev/null 2>&1
+	update-rc.d HTPC_Manager defaults > /dev/null 2>&1
+	chmod -R a+x $INSTALLDIR/HTPC_Manager > /dev/null 2>&1
+	chown -hR $mainuser:$maingroup $INSTALLDIR/HTPC_Manager > /dev/null 2>&1
+	service HTPC_Manager start > /dev/null 2>&1
+	sleep 5
+	service HTPC_Manager stop > /dev/null 2>&1
+	chmod -R a+x $INSTALLDIR/HTPC_Manager > /dev/null 2>&1
+	service HTPC_Manager start > /dev/null 2>&1
+	service="HTPC Manager"
+	address="http://$ip:8089"
+	port=":8089"
+	panel;
+	echo "";
+	echo "Finished";
+	sleep 1
+else
+	xdm="0"
+fi
 }
 
 install_ML()
@@ -4085,6 +4239,7 @@ fi
 finish()
 {
 screen;
+check="0"
 #ip=`ifconfig | grep "inet addr:" | head -n 1  | cut -d':' -f2 | cut -d' ' -f1`;
 echo "";
 echo "All your selected applications have been installed and are now running.";
@@ -4093,24 +4248,29 @@ echo "Access your new services via the following addresses:";
 echo "";
 
 if [ "$ml" == "1" ]; then
+	check="1"
 	echo "";
 	echo "    	MyLar 	      ---     http://$ip:8090";
 fi
 
 if [ "$hpm" == "1" -o "$hpd" == "1" ]; then
+	check="1"
 	echo "    	Headphones    ---     http://$ip:8181";
 fi
 
 if [ "$sbm" == "1" -o "$sbd" == "1" -o "$sbt" == "1" ]; then
+	check="1"
 	echo "    	SickBeard     ---     http://$ip:8081"
 fi
 
 if [ "$sub" == "1" -a "$mc" != "1" ]; then
+	check="1"
 	echo "    	SubSonic      ---     http://$ip:4040";
 fi
 
 if [ "$mc" != "2" ]; then
 	if [ "$mc" == "1" ]; then
+		check="1"
 		echo "    	MusicCabinet  ---     http://$ip:4040";
 	fi
 else
@@ -4119,62 +4279,85 @@ else
 fi
 
 if [ "$cpv" == "1" ]; then
+	check="1"
 	echo "    	CouchPotato   ---     http://$ip:5000";
 fi
 
 if [ "$cpm" == "1" -o "$cpd" == "1" ]; then
+	check="1"
 	echo "    	CouchPotatov2 ---     http://$ip:5050";
 fi
 
 if [ "$sab" == "1" ]; then
+	check="1"
 	echo "    	SABnzbd       ---     http://$ip:8080";
 fi
 
 if [ "$llm" == "1" ]; then
+	check="1"
 	echo "    	LazyLibrarian ---     http://$ip:8082";
 fi
 
 if [ "$pyl" == "1" ]; then
+	check="1"
 	echo "    	PyLoad        ---     http://$ip:8888";
 fi
 
 if [ "$nzbf" == "1" ]; then
+	check="1"
 	echo "    	Newznab        ---     http://$ip:${NEWZNABPORT}";
 fi
 
 if [ "$nzbp" == "1" ]; then
+	check="1"
 	echo "    	Newznab+      ---     http://$ip:${NEWZNABPORT}";
 fi
 
 if [ "$mar" == "1" ]; then
+	check="1"
 	echo "    	Maraschino     ---     http://$ip:9999";
 fi
 
 if [ "$del" == "1" ]; then
+	check="1"
 	echo "    	Deluge         ---     http://$ip:8112";
 fi
 
 if [ "$asub" == "1" ]; then
+	check="1"
 	echo "    	Auto-Sub       ---     http://$ip:8083";
 fi
 
 if [ "$exp" == "1" ]; then
+	check="1"
 	echo "    	Extplorer     ---     http://$ip/extplorer";
 fi
 
 if [ "$gz" == "1" ]; then
+	check="1"
 	echo "    	GameZ         ---     http://$ip:8085";
 fi
 
 if [ "$bbs" == "1" ]; then
+	check="1"
 	echo "    	BicBucStriim  ---     http://$ip/bbs";
 fi
 
 if [ "$xdm" == "1" ]; then
-	echo "    	XDM  ---     http://$ip:8085";
+	check="1"
+	echo "    	XDM           ---     http://$ip:8085";
 fi
-sleep 5
-exit 0
+
+if [ "$htpc" == "1" ]; then
+	check="1"
+	echo "    	HTPC Manager  ---     http://$ip:8089";
+fi
+if [ "$check" == "1" ]; then
+	sleep 5
+	exit 0
+else
+	menu;
+fi
 }
 
 warnRoot()
