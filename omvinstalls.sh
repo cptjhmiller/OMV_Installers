@@ -23,6 +23,18 @@ clear;
 #git config --global http.proxy http://proxy:8080
 #// To check the proxy settings
 #git config --get http.proxy
+#wget http://downloads.sourceforge.net/mediainfo/mediainfo_0.7.64-1_amd64.Debian_6.0.deb
+#wget http://downloads.sourceforge.net/mediainfo/libmediainfo0_0.7.64-1_amd64.Debian_6.0.deb
+#wget http://downloads.sourceforge.net/zenlib/libzen0_0.4.29-1_amd64.Debian_6.0.deb
+#dpkg -i libzen0_0.4.29-1_amd64.Debian_6.0.deb
+#dpkg -i libmediainfo0_0.7.64-1_amd64.Debian_6.0.deb
+#dpkg -i mediainfo_0.7.64-1_amd64.Debian_6.0.deb
+#rm libzen0_0.4.29-1_amd64.Debian_6.0.deb
+#rm libmediainfo0_0.7.64-1_amd64.Debian_6.0.deb
+#rm mediainfo_0.7.64-1_amd64.Debian_6.0.deb
+
+
+
 ################################################################################
 
 ###################
@@ -1077,6 +1089,10 @@ Clean;
 python)
 install_PYTHON;
 ;;
+# Install Bacula
+bacula)
+install_Bacula;
+;;
 Q|q)
 exit
 ;;
@@ -1990,6 +2006,433 @@ panel;
 echo "";
 echo "Finished";
 sleep 1
+}
+
+install_Bacula()
+{
+service bacula stop > /dev/null 2>&1
+screen;
+cd /tmp
+echo
+echo "    *****************You selected to install Bacula***********************";
+echo
+echo "Downloading and installing Bacula and Webacula...";
+#http://cheatsheet.logicalwebhost.com/bacula-howto/ & http://tipstricks.itmatrix.eu/?p=612
+
+mypass="1234"
+appinstall="build-essential libpq-dev libncurses5-dev libssl-dev psmisc libmysql++-dev php5-gd php5-mysql libapache2-mod-php5 zendframework"
+if [ -e /var/lib/dpkg/info/mysql-server.list ]; then
+	getmysql;
+else
+	echo mysql-server mysql-server/root_password password $mypass | sudo debconf-set-selections
+	echo mysql-server mysql-server/root_password_again password $mypass | sudo debconf-set-selections
+	appinstall="build-essential libpq-dev libncurses5-dev libssl-dev psmisc libmysql++-dev php5-gd php5-mysql libapache2-mod-php5 zendframework"
+fi
+
+echo "Downloading and installing Bacula...";
+t=0
+echo -n ""
+for item in ${appinstall[@]}; do
+	echo -ne $t%           \\r
+	if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
+		/usr/bin/apt-get -qq install "$item" > /dev/null 2>&1
+		t=$(($t + 8))
+	else
+		t=$(($t + 8))
+	fi
+done
+
+cd /tmp
+
+
+wget http://downloads.sourceforge.net/project/bacula/bacula/5.2.13/bacula-5.2.13.tar.gz
+tar fvxz bacula-5.2.13.tar.gz
+cd bacula-5.2.13
+
+
+./configure --prefix=/usr --sbindir=/usr/sbin --sysconfdir=/etc/bacula --with-scriptdir=/etc/bacula \
+--enable-smartalloc --enable-conio --with-mysql --with-openssl --with-dir-user=bacula \
+--with-dir-group=bacula --with-sd-user=bacula --with-sd-group=bacula --with-fd-user=root \
+--with-fd-group=bacula --with-working-dir=/var/lib/bacula --with-pid-dir=/var/run \
+--with-subsys-dir=/var/run/subsys
+
+make && make install
+
+
+
+MYSQL=$(which mysql)
+
+#/etc/bacula/grant_mysql_privileges -u root -p
+/etc/bacula/create_mysql_database -p$mypass
+/etc/bacula/make_mysql_tables -p$mypass
+/etc/bacula/grant_bacula_privileges -p$mypass
+echo "SET PASSWORD FOR 'bacula'@'localhost' = PASSWORD('bacula');FLUSH PRIVILEGES;" | mysql -p$mypass
+
+QUESTION
+
+
+sed -i "s#Archive Device = /path/to/file/archive/dir#Archive Device = /backup#g" /etc/bacula/bacula-sd.conf
+sed -i "s#dbuser = \"\"; dbpassword = \"\"#dbuser = \"bacula\"; dbpassword = \"bacula\"#g" /etc/bacula/bacula-dir.conf
+#	Change this also?
+#	mail = root@localhost = all, !skipped
+
+
+groupadd bacula
+useradd -g bacula -d /var/lib/bacula -c "Bacula User" -s /bin/bash bacula
+passwd bacula
+
+
+
+chown root:bacula /var/lib/bacula
+mkdir /var/run/subsys
+chown -R bacula:bacula /var/run/subsys
+mkdir /backup
+chown -R bacula:bacula /backup
+touch /var/log/bacula.log
+chown bacula:bacula /var/log/bacula.log
+head -n 11 /etc/init.d/skeleton > /etc/init.d/bacula
+sed -e '1 d' -e 's/skeleton/bacula/' /etc/bacula/bacula >> /etc/init.d/bacula
+chmod 755 /etc/init.d/bacula
+update-rc.d bacula defaults
+/etc/init.d/bacula start
+
+wget http://sourceforge.net/projects/webacula/files/webacula/5.5.1/webacula-5.5.1.tar.gz
+tar zxf webacula-5.5.1.tar.gz
+mv webacula-5.5.1 /usr/share/webacula
+
+
+0L5JuFDgeIIFxIcV+yhDsypdzL5RAEenc4cC2TsQK23i
+eJEnMF+3JsLmo+uAqgOn7/cpYa3RGfPBeXSJ2Ypov2HK
+
+
+ALIcNJlsBo0HYWOYG9+2uy/hNWhOvVfvgIzvscOFi3/P
+
+chown www-data:www-data /usr/share/webacula -R
+chown www-data:www-data /etc/bacula/bconsole.conf
+
+
+#cd /usr/share/webacula/install
+#php check_system_requirements.php
+
+
+echo '# See also application/config.ini
+
+# bacula settings
+db_name="bacula"
+db_user="bacula"
+
+# CHANGE_THIS
+db_pwd="bacula"
+webacula_root_pwd="bacula"' > /usr/share/webacula/install/db.conf
+
+sed -i "s#db.config.username = root#db.config.username = bacula#g" /usr/share/webacula/application/config.ini
+sed -i "s#db.config.password =#db.config.password = bacula#g" /usr/share/webacula/application/config.ini
+sed -i "s#def.timezone = \"Europe/Minsk\"#def.timezone = \"Europe/Minsk\"#g" /usr/share/webacula/application/config.ini
+#nano /usr/share/webacula/application/config.ini
+
+
+cd /usr/share/webacula/install/MySql/
+./10_make_tables.sh
+./20_acl_make_tables.sh
+
+
+echo '#
+# Webacula - Web interface of a Bacula backup system
+# Apache conf
+#
+# Allows only localhost by default
+#
+
+LoadModule rewrite_module /usr/lib/apache2/modules/mod_rewrite.so
+
+#AccessFileName .htaccess
+#RewriteLog "/var/log/httpd/mod_rewrite.log"
+#RewriteLogLevel 3
+
+# SetEnv APPLICATION_ENV development
+SetEnv APPLICATION_ENV production
+
+Alias /webacula  /usr/share/webacula/html
+<Directory /usr/share/webacula/html>
+   RewriteEngine On
+
+   RewriteBase   /webacula
+   RewriteCond %{REQUEST_FILENAME} -s [OR]
+   RewriteCond %{REQUEST_FILENAME} -l [OR]
+   RewriteCond %{REQUEST_FILENAME} -d
+   RewriteRule ^.*$ - [NC,L]
+   RewriteRule ^.*$ index.php [NC,L]
+
+   php_flag magic_quotes_gpc off
+   php_flag register_globals off
+
+   Options Indexes FollowSymLinks
+   AllowOverride All
+   Order allow,deny
+
+   Allow from all
+   #Allow from 127.0.0.1
+   #Allow from localhost
+   #Allow from ::1
+   #
+   # change the settings below
+   #
+   # Allow from <your network>
+</Directory>
+
+
+<Directory /usr/share/webacula/docs>
+   Order allow,deny
+   Allow from all
+</Directory>
+
+<Directory /usr/share/webacula/application>
+   Order allow,deny
+   Allow from all
+</Directory>
+
+<Directory /usr/share/webacula/languages>
+   Order allow,deny
+   Allow from all
+</Directory>
+
+<Directory /usr/share/webacula/library>
+   Order allow,deny
+   Allow from all
+</Directory>
+
+<Directory /usr/share/webacula/install>
+   Order allow,deny
+   Allow from all
+</Directory>
+
+<Directory /usr/share/webacula/tests>
+   Order allow,deny
+   Allow from all
+</Directory>
+
+<Directory /usr/share/webacula/data>
+   Order allow,deny
+   Allow from all
+</Directory>
+
+
+
+#
+# test mod_rewrite
+#
+<Directory /usr/share/webacula/html/test_mod_rewrite>
+RewriteEngine On
+   # for test mod_rewritee
+RewriteBase   /webacula/test_mod_rewrite
+RewriteRule ^testlink([^/]*).html$  index.php?testlink=$1 [L]
+
+   php_flag magic_quotes_gpc off
+   php_flag register_globals off
+
+   Options Indexes FollowSymLinks
+   AllowOverride All
+   Order allow,deny
+
+   Allow from all
+   #Allow from 127.0.0.1
+   #Allow from localhost
+   #Allow from ::1
+   #
+   # change the settings below
+   #
+   # Allow from <your network>
+</Directory>' > /etc/apache2/openmediavault-webgui.d/webacula.conf
+
+usermod -aG bacula www-data
+touch /var/log/apache2/webacula.error.log
+/etc/init.d/apache2 restart
+
+
+
+
+
+echo 'Alias /webacula  /usr/share/webacula/html
+ErrorLog /var/log/apache2/webacula.error.log
+LogFormat "%h %l %u %t \"%r\" %>s %b" common
+DirectoryIndex index.php
+DocumentRoot /usr/share/webacula/html
+php_flag magic_quotes_gpc off
+php_flag register_globals off
+
+RewriteEngine On
+
+# edit RewriteBase if necessary
+RewriteBase   /webacula
+
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]
+
+<Directory /usr/share/webacula/html/>
+    Options FollowSymLinks Indexes Multiviews  +Indexes
+    <FilesMatch \.php$>
+        FcgidWrapper /var/www/openmediavault/php-fcgi .php
+        SetHandler fcgid-script
+        Options +ExecCGI 
+    </FilesMatch>
+    Order Allow,Deny
+    Allow from All
+    AllowOverride None
+</Directory>' > /etc/apache2/sites-enabled/webacula
+
+
+
+a2enmod php5
+a2ensite webacula > /dev/null 2>&1
+a2dissite default > /dev/null 2>&1
+a2enmod rewrite > /dev/null 2>&1
+service apache2 restart
+
+
+
+Get:1 http://packages.omv-extras.org/debian/ sardaukar/main openmediavault-extplorer all 0.5.2 [1783 kB]
+Fetched 1783 kB in 11s (149 kB/s)
+Selecting previously deselected package openmediavault-extplorer.
+(Reading database ... 29775 files and directories currently installed.)
+Unpacking openmediavault-extplorer (from .../openmediavault-extplorer_0.5.2_all.deb) ...
+Processing triggers for openmediavault
+
+
+
+
+
+
+
+
+
+
+SetEnv APPLICATION_ENV development
+# SetEnv APPLICATION_ENV production
+
+php_flag magic_quotes_gpc off
+php_flag register_globals off
+
+RewriteEngine On
+
+# edit RewriteBase if necessary
+RewriteBase   /webacula
+
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+wget http://downloads.sourceforge.net/project/bacula/bacula/5.2.13/bacula-gui-5.2.13.tar.gz
+tar zxf bacula-gui-5.2.13.tar.gz
+cd bacula-gui-5.2.13/bweb
+
+
+#cpan Time::ParseDate
+#cpan Date::Calc
+
+mkdir -p /usr/share/bweb/tpl/{en,fr,es}/share/bweb/tpl/{en,fr,es}
+
+
+
+apt-get install libgd-graph-perl libhtml-template-perl libexpect-perl libdbd-mysql-perl libdbd-pg-perl libdbi-perl libdate-calc-perl libtime-modules-perl
+
+sed -i "s#/bin/sh#/bin/bash#g" install_bweb
+sed -i "s#WEB_DIR=/srv/www/htdocs#WEB_DIR=/var/www#g" install_bweb
+sed -i "s#CGI_BIN=/srv/www/cgi-bin#CGI_BIN=/usr/lib/cgi-bin#g" install_bweb
+sed -i "s#HTTP_USER=wwwrun#HTTP_USER=www-data#g" install_bweb
+sed -i "s#HTTP_GROUP=www#HTTP_GROUP=www-data#g" install_bweb
+sed -i "s#DB_PW=\"\"#DB_PW=\"bacula\"#g" install_bweb
+sed -i "s#EMAIL_ADDR=\"xxx@localhost\"#EMAIL_ADDR=\"bob@getlost.com\"#g" install_bweb
+
+
+
+echo 'Alias /bweb /var/www/bweb/
+ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+<Directory /var/www/bweb>
+    Options FollowSymLinks
+AuthType Basic
+AuthName "Private area"
+AuthUserFile /etc/apache2/auth/web.auth
+Require user admin
+DirectoryIndex index.html
+Options -Indexes +FollowSymLinks
+AllowOverride None
+Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+Order allow,deny
+Allow from all
+    <FilesMatch \.php$>
+        FcgidWrapper /var/www/openmediavault/php-fcgi .php
+        SetHandler fcgid-script
+        Options +ExecCGI
+    </FilesMatch>
+    Order Allow,Deny
+    Allow from All
+    AllowOverride None
+AllowOverride All
+</Directory>' > /etc/apache2/openmediavault-webgui.d/bweb.conf
+
+
+mkdir -p /etc/apache2/auth
+touch /etc/apache2/auth/web.auth
+htpasswd /etc/apache2/auth/web.auth admin openmediavault
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 install_HP()
@@ -3836,14 +4279,14 @@ if QUESTION; then
 	RUNNING=`expr "$(uname -m)"`
 	if [ "$RUNNING" == "x86_64" ]; then
 		cd /tmp > /dev/null 2>&1
-		wget http://ftp.us.debian.org/debian/pool/main/e/eglibc/multiarch-support_2.17-93_amd64.deb > /dev/null 2>&1
-		dpkg -i multiarch-support_2.17-93_amd64.deb > /dev/null 2>&1
-		rm multiarch-support_2.17-93_amd64.deb > /dev/null 2>&1
+		wget http://ftp.us.debian.org/debian/pool/main/e/eglibc/multiarch-support_2.17-96_amd64.deb > /dev/null 2>&1
+		dpkg -i multiarch-support_2.17-96_amd64.deb > /dev/null 2>&1
+		rm multiarch-support_2.17-96_amd64.deb > /dev/null 2>&1
 	elif [ "$RUNNING" == "i686" ]; then
 		cd /tmp > /dev/null 2>&1
-		wget http://ftp.us.debian.org/debian/pool/main/e/eglibc/multiarch-support_2.17-93_i386.deb > /dev/null 2>&1
-		dpkg -i multiarch-support_2.17-93_i386.deb > /dev/null 2>&1
-		rm multiarch-support_2.17-93_i386.deb > /dev/null 2>&1
+		wget http://ftp.us.debian.org/debian/pool/main/e/eglibc/multiarch-support_2.17-96_i386.deb > /dev/null 2>&1
+		dpkg -i multiarch-support_2.17-96_i386.deb > /dev/null 2>&1
+		rm multiarch-support_2.17-96_i386.deb > /dev/null 2>&1
 	fi
 	t=0
 	echo -ne $t%           \\r
@@ -4026,7 +4469,7 @@ CustomLog /openmediavault-webgui_access.log combined
 	#ln -s /etc/apache2/sites-available/nZEDb /etc/apache2/sites-enabled/nZEDb
 
 	chmod 777 -R /var/www/nZEDb
-	mysql -u root -p$mypass -e "CREATE DATABASE nzedb CHARACTER SET utf8 COLLATE utf8_bin;
+	mysql -u root -p1234 -e "CREATE DATABASE nzedb CHARACTER SET utf8 COLLATE utf8_bin;
 CREATE USER 'nzedb'@'%' IDENTIFIED BY PASSWORD '*1866926EB89CFCFA28CCB6D28A8834777C277E57';
 GRANT ALL ON nzedb.* TO 'nzedb'@'%';
 GRANT CREATE ON nzedb.* TO 'nzedb'@'%';
@@ -4077,7 +4520,7 @@ CustomLog /openmediavault-webgui_access.log combined
 #ln -s /etc/apache2/sites-available/newznab /etc/apache2/sites-enabled/newznab
 a2ensite newznab > /dev/null 2>&1
 chmod 777 -R /var/www/newznab
-mysql -u root -p$mypass -e "CREATE DATABASE newznab CHARACTER SET utf8 COLLATE utf8_bin;
+mysql -u root -p1234 -e "CREATE DATABASE newznab CHARACTER SET utf8 COLLATE utf8_bin;
 CREATE USER 'newznab'@'%' IDENTIFIED BY PASSWORD '*38127B8B90DF33A49508ED3908A7EEEF871E18A3';
 GRANT ALL ON newznab.* TO 'newznab'@'%';
 GRANT CREATE ON newznab.* TO 'newznab'@'%';
