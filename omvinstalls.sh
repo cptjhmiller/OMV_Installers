@@ -2064,27 +2064,25 @@ MYSQL=$(which mysql)
 /etc/bacula/grant_bacula_privileges -p$mypass > /dev/null 2>&1
 echo "SET PASSWORD FOR 'bacula'@'localhost' = PASSWORD('bacula');FLUSH PRIVILEGES;" | mysql -p$mypass > /dev/null 2>&1
 
-sed -i "s#Archive Device = /path/to/file/archive/dir#Archive Device = /backup#g" /etc/bacula/bacula-sd.conf > /dev/null 2>&1
-sed -i "s#dbuser = \"\"; dbpassword = \"\"#dbuser = \"bacula\"; dbpassword = \"bacula\"#g" /etc/bacula/bacula-dir.conf > /dev/null 2>&1
-#	Change this also?
-#	mail = root@localhost = all, !skipped
+
 
 
 groupadd bacula > /dev/null 2>&1
-useradd -g bacula -d /var/lib/bacula -c "Bacula User" -s /bin/bash bacula > /dev/null 2>&1
-passwd bacula
+useradd -p bacula -g bacula -d /var/lib/bacula -c "Bacula User" -s /bin/bash bacula > /dev/null 2>&1
+#passwd bacula
 
 
 
 chown root:bacula /var/lib/bacula > /dev/null 2>&1
 mkdir /var/run/subsys > /dev/null 2>&1
 chown -R bacula:bacula /var/run/subsys > /dev/null 2>&1
-mkdir /backup > /dev/null 2>&1
+mkdir -p /backup/bacula-restores > /dev/null 2>&1
 chown -R bacula:bacula /backup > /dev/null 2>&1
+chmod 700 /backup -R
 touch /var/log/bacula.log > /dev/null 2>&1
 chown bacula:bacula /var/log/bacula.log > /dev/null 2>&1
-head -n 11 /etc/init.d/skeleton > /etc/init.d/bacula > /dev/null 2>&1
-sed -e '1 d' -e 's/skeleton/bacula/' /etc/bacula/bacula >> /etc/init.d/bacula > /dev/null 2>&1
+head -n 11 /etc/init.d/skeleton > /etc/init.d/bacula
+sed -e '1 d' -e 's/skeleton/bacula/' /etc/bacula/bacula >> /etc/init.d/bacula
 chmod 755 /etc/init.d/bacula > /dev/null 2>&1
 update-rc.d bacula defaults > /dev/null 2>&1
 /etc/init.d/bacula start > /dev/null 2>&1
@@ -2097,7 +2095,7 @@ mv webacula-5.5.1 /usr/share/webacula > /dev/null 2>&1
 
 chown www-data:www-data /usr/share/webacula -R > /dev/null 2>&1
 chown www-data:www-data /etc/bacula/bconsole.conf > /dev/null 2>&1
-
+chown root:www-data /usr/sbin/bconsole
 
 #cd /usr/share/webacula/install
 #php check_system_requirements.php
@@ -2116,8 +2114,15 @@ TZ=$(echo "$(omv_config_get "//system/time/timezone")" | sed 's.\/.\\\/.g')
 sed -i "s#db.config.username = root#db.config.username = bacula#g" /usr/share/webacula/application/config.ini > /dev/null 2>&1
 sed -i "s#db.config.password =#db.config.password = bacula#g" /usr/share/webacula/application/config.ini > /dev/null 2>&1
 sed -i "s#def.timezone = \"Europe/Minsk\"#def.timezone = \"$TZ\"#g" /usr/share/webacula/application/config.ini > /dev/null 2>&1
+sed -i "s#bacula.sudo = \"/usr/bin/sudo\"#bacula.sudo = \"\"#g" /usr/share/webacula/application/config.ini > /dev/null 2>&1
+sed -i "s#bacula.bconsole = \"/sbin/bconsole\"#bacula.bconsole = \"/usr/sbin/bconsole\"#g" /usr/share/webacula/application/config.ini > /dev/null 2>&1
 sed -i "s#'BACULA_VERSION', 12#'BACULA_VERSION', 14#g" /usr/share/webacula/html/index.php > /dev/null 2>&1
+sed -i "s#Archive Device = /tmp#Archive Device = /backup#g" /etc/bacula/bacula-sd.conf > /dev/null 2>&1
+sed -i "s#/tmp/bacula-restores#/backup/bacula-restores#g" /etc/bacula/bacula-dir.conf > /dev/null 2>&1
 sed -i "s#dbpassword = \"\"#dbpassword = \"bacula\"#g" /etc/bacula/bacula-dir.conf > /dev/null 2>&1
+sed -i "s#dbuser = \"\"; dbpassword = \"\"#dbuser = \"bacula\"; dbpassword = \"bacula\"#g" /etc/bacula/bacula-dir.conf > /dev/null 2>&1
+#	Change this also?
+#	mail = root@localhost = all, !skipped
 #nano /usr/share/webacula/application/config.ini
 
 
@@ -2227,10 +2232,15 @@ touch /var/log/apache2/webacula.error.log > /dev/null 2>&1
 /etc/init.d/apache2 restart > /dev/null 2>&1
 
 #/etc/bacula 777 perms
+service="webacula"
+port="/Webacula/"
+panel;
+echo "";
+echo "Finished";
+sleep 1
 
 
-
-
+menu;
 }
 
 install_HP()
