@@ -2026,7 +2026,7 @@ if [ -e /var/lib/dpkg/info/mysql-server.list ]; then
 else
 	echo mysql-server mysql-server/root_password password $mypass | sudo debconf-set-selections
 	echo mysql-server mysql-server/root_password_again password $mypass | sudo debconf-set-selections
-	appinstall="build-essential libpq-dev libncurses5-dev libssl-dev psmisc libmysql++-dev php5-gd php5-mysql libapache2-mod-php5 zendframework"
+	appinstall="build-essential libpq-dev libncurses5-dev libssl-dev psmisc libmysql++-dev php5-gd php5-mysql libapache2-mod-php5 zendframework mysql-server"
 fi
 
 echo "Downloading and installing Bacula...";
