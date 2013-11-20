@@ -2036,79 +2036,67 @@ for item in ${appinstall[@]}; do
 	echo -ne $t%           \\r
 	if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
 		/usr/bin/apt-get -qq install "$item" > /dev/null 2>&1
-		t=$(($t + 8))
+		t=$(($t + 7))
 	else
-		t=$(($t + 8))
+		t=$(($t + 7))
 	fi
 done
 
-cd /tmp
-
-
-wget http://downloads.sourceforge.net/project/bacula/bacula/5.2.13/bacula-5.2.13.tar.gz
-tar fvxz bacula-5.2.13.tar.gz
-cd bacula-5.2.13
-
+wget http://downloads.sourceforge.net/project/bacula/bacula/5.2.13/bacula-5.2.13.tar.gz > /dev/null 2>&1
+t=$(($t + 4))
+tar fvxz bacula-5.2.13.tar.gz > /dev/null 2>&1
+cd bacula-5.2.13 > /dev/null 2>&1
+t=$(($t + 4))
 
 ./configure --prefix=/usr --sbindir=/usr/sbin --sysconfdir=/etc/bacula --with-scriptdir=/etc/bacula \
 --enable-smartalloc --enable-conio --with-mysql --with-openssl --with-dir-user=bacula \
 --with-dir-group=bacula --with-sd-user=bacula --with-sd-group=bacula --with-fd-user=root \
 --with-fd-group=bacula --with-working-dir=/var/lib/bacula --with-pid-dir=/var/run \
---with-subsys-dir=/var/run/subsys
-
-make && make install
-
-
-
+--with-subsys-dir=/var/run/subsys > /dev/null 2>&1
+t=$(($t + 4))
+make && make install > /dev/null 2>&1
+t=$(($t + 4))
 MYSQL=$(which mysql)
 
 #/etc/bacula/grant_mysql_privileges -u root -p
-/etc/bacula/create_mysql_database -p$mypass
-/etc/bacula/make_mysql_tables -p$mypass
-/etc/bacula/grant_bacula_privileges -p$mypass
-echo "SET PASSWORD FOR 'bacula'@'localhost' = PASSWORD('bacula');FLUSH PRIVILEGES;" | mysql -p$mypass
+/etc/bacula/create_mysql_database -p$mypass > /dev/null 2>&1
+/etc/bacula/make_mysql_tables -p$mypass > /dev/null 2>&1
+/etc/bacula/grant_bacula_privileges -p$mypass > /dev/null 2>&1
+echo "SET PASSWORD FOR 'bacula'@'localhost' = PASSWORD('bacula');FLUSH PRIVILEGES;" | mysql -p$mypass > /dev/null 2>&1
 
-QUESTION
-
-
-sed -i "s#Archive Device = /path/to/file/archive/dir#Archive Device = /backup#g" /etc/bacula/bacula-sd.conf
-sed -i "s#dbuser = \"\"; dbpassword = \"\"#dbuser = \"bacula\"; dbpassword = \"bacula\"#g" /etc/bacula/bacula-dir.conf
+sed -i "s#Archive Device = /path/to/file/archive/dir#Archive Device = /backup#g" /etc/bacula/bacula-sd.conf > /dev/null 2>&1
+sed -i "s#dbuser = \"\"; dbpassword = \"\"#dbuser = \"bacula\"; dbpassword = \"bacula\"#g" /etc/bacula/bacula-dir.conf > /dev/null 2>&1
 #	Change this also?
 #	mail = root@localhost = all, !skipped
 
 
-groupadd bacula
-useradd -g bacula -d /var/lib/bacula -c "Bacula User" -s /bin/bash bacula
+groupadd bacula > /dev/null 2>&1
+useradd -g bacula -d /var/lib/bacula -c "Bacula User" -s /bin/bash bacula > /dev/null 2>&1
 passwd bacula
 
 
 
-chown root:bacula /var/lib/bacula
-mkdir /var/run/subsys
-chown -R bacula:bacula /var/run/subsys
-mkdir /backup
-chown -R bacula:bacula /backup
-touch /var/log/bacula.log
-chown bacula:bacula /var/log/bacula.log
-head -n 11 /etc/init.d/skeleton > /etc/init.d/bacula
-sed -e '1 d' -e 's/skeleton/bacula/' /etc/bacula/bacula >> /etc/init.d/bacula
-chmod 755 /etc/init.d/bacula
-update-rc.d bacula defaults
-/etc/init.d/bacula start
+chown root:bacula /var/lib/bacula > /dev/null 2>&1
+mkdir /var/run/subsys > /dev/null 2>&1
+chown -R bacula:bacula /var/run/subsys > /dev/null 2>&1
+mkdir /backup > /dev/null 2>&1
+chown -R bacula:bacula /backup > /dev/null 2>&1
+touch /var/log/bacula.log > /dev/null 2>&1
+chown bacula:bacula /var/log/bacula.log > /dev/null 2>&1
+head -n 11 /etc/init.d/skeleton > /etc/init.d/bacula > /dev/null 2>&1
+sed -e '1 d' -e 's/skeleton/bacula/' /etc/bacula/bacula >> /etc/init.d/bacula > /dev/null 2>&1
+chmod 755 /etc/init.d/bacula > /dev/null 2>&1
+update-rc.d bacula defaults > /dev/null 2>&1
+/etc/init.d/bacula start > /dev/null 2>&1
 
-wget http://sourceforge.net/projects/webacula/files/webacula/5.5.1/webacula-5.5.1.tar.gz
-tar zxf webacula-5.5.1.tar.gz
-mv webacula-5.5.1 /usr/share/webacula
+echo "Downloading and installing Bacula...";
 
+wget http://sourceforge.net/projects/webacula/files/webacula/5.5.1/webacula-5.5.1.tar.gz > /dev/null 2>&1
+tar zxf webacula-5.5.1.tar.gz > /dev/null 2>&1
+mv webacula-5.5.1 /usr/share/webacula > /dev/null 2>&1
 
-0L5JuFDgeIIFxIcV+yhDsypdzL5RAEenc4cC2TsQK23i
-eJEnMF+3JsLmo+uAqgOn7/cpYa3RGfPBeXSJ2Ypov2HK
-
-
-ALIcNJlsBo0HYWOYG9+2uy/hNWhOvVfvgIzvscOFi3/P
-
-chown www-data:www-data /usr/share/webacula -R
-chown www-data:www-data /etc/bacula/bconsole.conf
+chown www-data:www-data /usr/share/webacula -R > /dev/null 2>&1
+chown www-data:www-data /etc/bacula/bconsole.conf > /dev/null 2>&1
 
 
 #cd /usr/share/webacula/install
@@ -2124,16 +2112,18 @@ db_user="bacula"
 # CHANGE_THIS
 db_pwd="bacula"
 webacula_root_pwd="bacula"' > /usr/share/webacula/install/db.conf
-
-sed -i "s#db.config.username = root#db.config.username = bacula#g" /usr/share/webacula/application/config.ini
-sed -i "s#db.config.password =#db.config.password = bacula#g" /usr/share/webacula/application/config.ini
-sed -i "s#def.timezone = \"Europe/Minsk\"#def.timezone = \"Europe/Minsk\"#g" /usr/share/webacula/application/config.ini
+TZ=$(echo "$(omv_config_get "//system/time/timezone")" | sed 's.\/.\\\/.g')
+sed -i "s#db.config.username = root#db.config.username = bacula#g" /usr/share/webacula/application/config.ini > /dev/null 2>&1
+sed -i "s#db.config.password =#db.config.password = bacula#g" /usr/share/webacula/application/config.ini > /dev/null 2>&1
+sed -i "s#def.timezone = \"Europe/Minsk\"#def.timezone = \"$TZ\"#g" /usr/share/webacula/application/config.ini > /dev/null 2>&1
+sed -i "s#'BACULA_VERSION', 12#'BACULA_VERSION', 14#g" /usr/share/webacula/html/index.php > /dev/null 2>&1
+sed -i "s#dbpassword = \"\"#dbpassword = \"bacula\"#g" /etc/bacula/bacula-dir.conf > /dev/null 2>&1
 #nano /usr/share/webacula/application/config.ini
 
 
-cd /usr/share/webacula/install/MySql/
-./10_make_tables.sh
-./20_acl_make_tables.sh
+cd /usr/share/webacula/install/MySql/ > /dev/null 2>&1
+./10_make_tables.sh > /dev/null 2>&1
+./20_acl_make_tables.sh > /dev/null 2>&1
 
 
 echo '#
@@ -2145,9 +2135,9 @@ echo '#
 
 LoadModule rewrite_module /usr/lib/apache2/modules/mod_rewrite.so
 
-#AccessFileName .htaccess
-#RewriteLog "/var/log/httpd/mod_rewrite.log"
-#RewriteLogLevel 3
+AccessFileName .htaccess
+RewriteLog "/var/log/apache2/mod_rewrite.log"
+RewriteLogLevel 3
 
 # SetEnv APPLICATION_ENV development
 SetEnv APPLICATION_ENV production
@@ -2171,12 +2161,6 @@ Alias /webacula  /usr/share/webacula/html
    Order allow,deny
 
    Allow from all
-   #Allow from 127.0.0.1
-   #Allow from localhost
-   #Allow from ::1
-   #
-   # change the settings below
-   #
    # Allow from <your network>
 </Directory>
 
@@ -2235,130 +2219,14 @@ RewriteRule ^testlink([^/]*).html$  index.php?testlink=$1 [L]
    Order allow,deny
 
    Allow from all
-   #Allow from 127.0.0.1
-   #Allow from localhost
-   #Allow from ::1
-   #
-   # change the settings below
-   #
    # Allow from <your network>
 </Directory>' > /etc/apache2/openmediavault-webgui.d/webacula.conf
 
-usermod -aG bacula www-data
-touch /var/log/apache2/webacula.error.log
-/etc/init.d/apache2 restart
+usermod -aG bacula www-data > /dev/null 2>&1
+touch /var/log/apache2/webacula.error.log > /dev/null 2>&1
+/etc/init.d/apache2 restart > /dev/null 2>&1
 
-
-
-
-
-echo 'Alias /webacula  /usr/share/webacula/html
-ErrorLog /var/log/apache2/webacula.error.log
-LogFormat "%h %l %u %t \"%r\" %>s %b" common
-DirectoryIndex index.php
-DocumentRoot /usr/share/webacula/html
-php_flag magic_quotes_gpc off
-php_flag register_globals off
-
-RewriteEngine On
-
-# edit RewriteBase if necessary
-RewriteBase   /webacula
-
-RewriteCond %{REQUEST_FILENAME} -s [OR]
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^.*$ - [NC,L]
-RewriteRule ^.*$ index.php [NC,L]
-
-<Directory /usr/share/webacula/html/>
-    Options FollowSymLinks Indexes Multiviews  +Indexes
-    <FilesMatch \.php$>
-        FcgidWrapper /var/www/openmediavault/php-fcgi .php
-        SetHandler fcgid-script
-        Options +ExecCGI 
-    </FilesMatch>
-    Order Allow,Deny
-    Allow from All
-    AllowOverride None
-</Directory>' > /etc/apache2/sites-enabled/webacula
-
-
-
-a2enmod php5
-a2ensite webacula > /dev/null 2>&1
-a2dissite default > /dev/null 2>&1
-a2enmod rewrite > /dev/null 2>&1
-service apache2 restart
-
-
-
-wget http://downloads.sourceforge.net/project/bacula/bacula/5.2.13/bacula-gui-5.2.13.tar.gz
-tar zxf bacula-gui-5.2.13.tar.gz
-cd bacula-gui-5.2.13/bweb
-
-
-#cpan Time::ParseDate
-#cpan Date::Calc
-
-mkdir -p /usr/share/bweb/tpl/{en,fr,es}/share/bweb/tpl/{en,fr,es}
-
-
-
-apt-get install libgd-graph-perl libhtml-template-perl libexpect-perl libdbd-mysql-perl libdbd-pg-perl libdbi-perl libdate-calc-perl libtime-modules-perl
-
-sed -i "s#/bin/sh#/bin/bash#g" install_bweb
-sed -i "s#WEB_DIR=/srv/www/htdocs#WEB_DIR=/var/www#g" install_bweb
-sed -i "s#CGI_BIN=/srv/www/cgi-bin#CGI_BIN=/usr/lib/cgi-bin#g" install_bweb
-sed -i "s#HTTP_USER=wwwrun#HTTP_USER=www-data#g" install_bweb
-sed -i "s#HTTP_GROUP=www#HTTP_GROUP=www-data#g" install_bweb
-sed -i "s#DB_PW=\"\"#DB_PW=\"bacula\"#g" install_bweb
-sed -i "s#EMAIL_ADDR=\"xxx@localhost\"#EMAIL_ADDR=\"bob@getlost.com\"#g" install_bweb
-
-
-
-echo 'Alias /bweb /var/www/bweb/
-ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
-<Directory /var/www/bweb>
-    Options FollowSymLinks
-AuthType Basic
-AuthName "Private area"
-AuthUserFile /etc/apache2/auth/web.auth
-Require user admin
-DirectoryIndex index.html
-Options -Indexes +FollowSymLinks
-AllowOverride None
-Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
-Order allow,deny
-Allow from all
-    <FilesMatch \.php$>
-        FcgidWrapper /var/www/openmediavault/php-fcgi .php
-        SetHandler fcgid-script
-        Options +ExecCGI
-    </FilesMatch>
-    Order Allow,Deny
-    Allow from All
-    AllowOverride None
-AllowOverride All
-</Directory>' > /etc/apache2/openmediavault-webgui.d/bweb.conf
-
-
-mkdir -p /etc/apache2/auth
-touch /etc/apache2/auth/web.auth
-htpasswd /etc/apache2/auth/web.auth admin openmediavault
-
-
-
-
-
-
-
-
-
-
-
-
-
+#/etc/bacula 777 perms
 
 
 
