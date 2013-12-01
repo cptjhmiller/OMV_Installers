@@ -79,7 +79,7 @@ screen()
 clear;
 echo "";
 echo "    -------------------------------Millers-------------------------------";
-echo "              OpenMediaVault Multi Application Installer V1.9.5          ";
+echo "              OpenMediaVault Multi Application Installer V1.9.6          ";
 echo "";
 }
 
@@ -2578,7 +2578,7 @@ echo "Downloading and installing BicBucStriim...";
 echo " ";
 t=9
 echo -ne 9%           \\r
-appinstall="php5-sqlite"
+appinstall="php5-sqlite apt-get install php5-gd"
 for item in ${appinstall[@]}; do
 	echo -ne $t%           \\r
 	if [ ! -e /var/lib/dpkg/info/"$item".list ]; then
@@ -2604,6 +2604,7 @@ panel;
 echo "";
 echo "Finished";
 sed -i -e 's/AllowOverride None/AllowOverride All/' /etc/apache2/openmediavault-webgui.d/default.conf > /dev/null 2>&1
+a2enmod rewrite
 service apache2 restart > /dev/null 2>&1
 sleep 1
 }
