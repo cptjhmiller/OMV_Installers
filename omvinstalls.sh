@@ -79,7 +79,7 @@ screen()
 clear;
 echo "";
 echo "    -------------------------------Millers-------------------------------";
-echo "              OpenMediaVault Multi Application Installer V1.9.7          ";
+echo "              OpenMediaVault Multi Application Installer V1.9.8          ";
 echo "";
 }
 
@@ -2409,7 +2409,7 @@ elif [ "$sbd" == "1" ]; then
 elif [ "$sbt" == "1" ]; then
 	echo "                           TORRENT BRANCH"
 	echo "Downloading and installing SickBeard.....";
-	git clone git://github.com/junalmeida/Sick-Beard.git new_SB > /dev/null
+	git clone git://github.com/mr-orange/Sick-Beard.git new_SB > /dev/null
 	ret=$?
 	if ! test "$ret" -eq 0; then
 		echo >&2 "git clone SickBeard failed with exit status $ret"
