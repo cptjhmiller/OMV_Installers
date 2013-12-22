@@ -79,7 +79,7 @@ screen()
 clear;
 echo "";
 echo "    -------------------------------Millers-------------------------------";
-echo "              OpenMediaVault Multi Application Installer V1.9.8          ";
+echo "              OpenMediaVault Multi Application Installer V1.9.9          ";
 echo "";
 }
 
@@ -855,7 +855,7 @@ echo "                 Or select multiples (e.g. 1 4 5 7 10)"
 echo "                To uninstall use a minus sign (e.g. -1)"
 echo "          Change default [F]older or enter a new [I]p address"
 echo ""
-echo "           1. CouchPotato                   10. Subsonic 4.9 beta2"
+echo "           1. CouchPotato                   10. Subsonic 4.9 beta3"
 echo "           2. CouchPotatoServer (Master)    11. LazyLibrarian"
 echo "           3. CouchPotatoServer (Develop)   12. PyLoad"
 echo "           4. SickBeard (Master)            13. nZEDb"
@@ -2551,12 +2551,12 @@ echo "    ****************You selected to install SubSonic*********************"
 echo
 echo "Downloading and installing SubSonic...";
 echo "This one takes some time, please wait...";
-wget http://switch.dl.sourceforge.net/project/subsonic/subsonic/4.9.beta2/subsonic-4.9.beta2.deb
+wget http://switch.dl.sourceforge.net/project/subsonic/subsonic/4.9.beta3/subsonic-4.9.beta3.deb
 # -O ./subsonic-4.7.deb > /dev/null 2>&1
-dpkg -i subsonic-4.9.beta2.deb > /dev/null 2>&1
+dpkg -i subsonic-4.9.beta3.deb > /dev/null 2>&1
 echo "Setting up startup options"
 #/etc/init.d/subsonic stop > /dev/null 2>&1
-rm subsonic-4.9.beta2.deb.deb
+rm subsonic-4.9.beta3.deb
 if [ "$mc" == "0" ]; then
 	service="SubSonic"
 	address="http://$ip:4040"
