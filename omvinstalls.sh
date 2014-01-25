@@ -803,6 +803,8 @@ cpd="0"
 sbm="0"
 sbd="0"
 sbt="0"
+sbmg="0"
+sbdg="0"
 hpm="0"
 hpd="0"
 sab="0"
@@ -828,6 +830,8 @@ ucpd="0"
 usbm="0"
 usbd="0"
 usbt="0"
+usbmg="0"
+usbdg="0"
 uhpm="0"
 uhpd="0"
 usab="0"
@@ -861,10 +865,11 @@ echo "           3. CouchPotatoServer (Develop)   12. PyLoad"
 echo "           4. SickBeard (Master)            13. nZEDb"
 echo "           5. SickBeard (Develop)           14. Newznab Paid"
 echo "           6. SickBeard Torrent             15. Maraschino"
-echo "           7. HeadPhones (Master)           16. Deluge"
-echo "           8. HeadPhones (Develop)          17. Auto-Sub"
-echo "           9. Sabnzbdplus                   18. Extplorer"
-echo "          19. MyLar                         20. Music Cabinet"
+echo "          25. SickBeard German (Master)     16. Deluge"
+echo "          26. SickBeard German (Develop)    17. Auto-Sub"
+echo "           7. HeadPhones (Master)           18. Extplorer"
+echo "           8. HeadPhones (Develop)          19. MyLar"
+echo "           9. Sabnzbdplus                   20. Music Cabinet"
 echo "          21. GameZ                         22. BicBucStriim"
 echo "          23. XDM                           24. HTPC Manager"
 echo ""
@@ -977,6 +982,14 @@ Uninstall_XDM;
 -24)
 Uninstall_Htpc;
 ;;
+# Uninstall SickBeard German (Master)
+-25)
+Uninstall_SickBeard;
+;;
+# Uninstall SickBeard German (Develop)
+-26)
+Uninstall_SickBeard;
+;;
 # CouchPotato
 1)
 cpv="1"
@@ -1072,6 +1085,14 @@ xdm="1"
 # HTPC Manager
 24)
 htpc="1"
+;;
+# SickBeard German (Master)
+25)
+sbmg="1"
+;;
+# SickBeard German (Develop)
+26)
+sbdg="1"
 ;;
 # Change IP address
 I|i)
@@ -1174,6 +1195,14 @@ fi
 
 if [ "$sbt" = "1" ]; then
 	echo "               SickBeard - Torrent Branch";
+fi
+
+if [ "$sbmg" = "1" ]; then
+        echo "           SickBeard German - Master Branch ";
+fi
+
+if [ "$sbdg" = "1" ]; then
+        echo "           SickBeard German - Develop Branch ";
 fi
 
 if [ "$sub" = "1" ]; then
@@ -1465,7 +1494,7 @@ if [ "$hpm" == "1" -o "$hpd" == "1" ]; then
 	install_HP;
 fi
 
-if [ "$sbm" == "1" -o "$sbd" == "1" -o "$sbt" == "1" ]; then
+if [ "$sbm" == "1" -o "$sbd" == "1" -o "$sbt" == "1" -o "$sbmg" == "1" -o "$sbdg" == "1" ]; then
 	install_SB;
 fi
 
@@ -2415,6 +2444,24 @@ elif [ "$sbt" == "1" ]; then
 		echo >&2 "git clone SickBeard failed with exit status $ret"
 		exit 1
 	fi
+elif [ "$sbmg" == "1" ]; then
+	echo "                           GERMAN MASTER BRANCH"
+	echo "Downloading and installing SickBeard.....";
+	git clone git://github.com/cytec/Sick-Beard.git -b master new_SB > /dev/null
+	ret=$?
+	if ! test "$ret" -eq 0; then
+			echo >&2 "git clone SickBeard failed with exit status $ret"
+			exit 1
+	fi
+elif [ "$sbdg" == "1" ]; then
+	echo "                           GERMAN DEVELOP BRANCH"
+	echo "Downloading and installing SickBeard.....";    	
+	git clone git://github.com/cytec/Sick-Beard.git -b development new_SB > /dev/null
+	ret=$?
+	if ! test "$ret" -eq 0; then
+			echo >&2 "git clone SickBeard failed with exit status $ret"
+			exit 1
+	fi	
 fi
 if [ -d $INSTALLDIR/sickbeard ]; then
 	cp -fRa /tmp/new_SB/. $INSTALLDIR/sickbeard
@@ -4510,7 +4557,7 @@ if [ "$hpm" == "1" -o "$hpd" == "1" ]; then
 	echo "    	Headphones    ---     http://$ip:8181";
 fi
 
-if [ "$sbm" == "1" -o "$sbd" == "1" -o "$sbt" == "1" ]; then
+if [ "$sbm" == "1" -o "$sbd" == "1" -o "$sbt" == "1" -o "$sbmg" == "1" -o "$sbdg" == "1" ]; then
 	check="1"
 	echo "    	SickBeard     ---     http://$ip:8081"
 fi
