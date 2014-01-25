@@ -2262,13 +2262,13 @@ touch /var/log/apache2/webacula.error.log > /dev/null 2>&1
 
 #/etc/bacula 777 perms
 service="webacula"
-port="/Webacula/"
+port="/webacula/"
 panel;
 echo "";
 echo "Finished";
 sleep 1
 
-
+service bacula restart > /dev/null 2>&1
 menu;
 }
 
@@ -2589,7 +2589,7 @@ if [ $? == 1 ]; then
 fi
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886 > /dev/null 2>&1
 /usr/bin/apt-get --quiet --quiet update
-/usr/bin/apt-get -qy install oracle-java7-installer
+/usr/bin/apt-get -qy install oracle-java8-installer
 #lame flac faad vorbis-tools ffmpeg > /dev/null 2>&1
 screen;
 cd /tmp
@@ -2598,12 +2598,12 @@ echo "    ****************You selected to install SubSonic*********************"
 echo
 echo "Downloading and installing SubSonic...";
 echo "This one takes some time, please wait...";
-wget http://switch.dl.sourceforge.net/project/subsonic/subsonic/4.9.beta3/subsonic-4.9.beta3.deb
+wget http://switch.dl.sourceforge.net/project/subsonic/subsonic/4.9.beta4/subsonic-4.9.beta4.deb
 # -O ./subsonic-4.7.deb > /dev/null 2>&1
-dpkg -i subsonic-4.9.beta3.deb > /dev/null 2>&1
+dpkg -i subsonic-4.9.beta4.deb > /dev/null 2>&1
 echo "Setting up startup options"
 #/etc/init.d/subsonic stop > /dev/null 2>&1
-rm subsonic-4.9.beta3.deb
+rm subsonic-4.9.beta4.deb
 if [ "$mc" == "0" ]; then
 	service="SubSonic"
 	address="http://$ip:4040"
@@ -3016,8 +3016,8 @@ cd /tmp
 echo
 echo "    ************You selected to install latest SABnzbd Stable************";
 echo ""
-STABLE=$(wget -q -O - https://raw.github.com/cptjhmiller/OMV_Installers/master/latest | awk '/0/{gsub(/\06/,"");print}')
-#STABLE=($(wget -q -O - https://raw.github.com/cptjhmiller/OMV_Installers/master/latest | awk '/0/{gsub(/\015/,"");print}'))
+#STABLE=$(wget -q -O - https://raw.github.com/cptjhmiller/OMV_Installers/master/latest | awk '/0/{gsub(/\06/,"");print}')
+STABLE=`wget -q http://sabnzbd.org/download/ -O - | \grep sourceforge\.net | grep Linux | \sed 's/.*href=\"\(.*\)\".*/\1/' | sed 's/.*-\(.*\)-.*/\1/'`
 echo "Downloading latest STABLE SABnzbd $STABLE"
 wget -nv http://downloads.sourceforge.net/project/sabnzbdplus/sabnzbdplus/${STABLE}/SABnzbd-${STABLE}-src.tar.gz > /dev/null 2>&1
 tar xzf SABnzbd-${STABLE}-src.tar.gz > /dev/null 2>&1
@@ -3120,7 +3120,7 @@ up_sab()
 {
 a=""
 #Pull latest version number and assign to variable and then display it
-STABLE=($(wget -q -O - https://raw.github.com/cptjhmiller/OMV_Installers/master/latest))
+STABLE=`wget -q http://sabnzbd.org/download/ -O - | \grep sourceforge\.net | grep Linux | \sed '\''s/.*href=\"\(.*\)\".*/\1/'\'' | sed '\''s/.*-\(.*\)-.*/\1/'\''`
 echo "Downloading latest STABLE SABnzbd $STABLE"
 cd /tmp
 wget -nv http://downloads.sourceforge.net/project/sabnzbdplus/sabnzbdplus/${STABLE}/SABnzbd-${STABLE}-src.tar.gz
