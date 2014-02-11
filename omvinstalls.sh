@@ -79,7 +79,7 @@ screen()
 clear;
 echo "";
 echo "    -------------------------------Millers-------------------------------";
-echo "              OpenMediaVault Multi Application Installer V1.9.9          ";
+echo "              OpenMediaVault Multi Application Installer V1.9.10         ";
 echo "";
 }
 
@@ -2598,12 +2598,12 @@ echo "    ****************You selected to install SubSonic*********************"
 echo
 echo "Downloading and installing SubSonic...";
 echo "This one takes some time, please wait...";
-wget http://switch.dl.sourceforge.net/project/subsonic/subsonic/4.9.beta4/subsonic-4.9.beta4.deb
+wget http://switch.dl.sourceforge.net/project/subsonic/subsonic/4.9/subsonic-4.9.deb
 # -O ./subsonic-4.7.deb > /dev/null 2>&1
-dpkg -i subsonic-4.9.beta4.deb > /dev/null 2>&1
+dpkg -i subsonic-4.9.deb > /dev/null 2>&1
 echo "Setting up startup options"
 #/etc/init.d/subsonic stop > /dev/null 2>&1
-rm subsonic-4.9.beta4.deb
+rm subsonic-4.9.deb
 if [ "$mc" == "0" ]; then
 	service="SubSonic"
 	address="http://$ip:4040"
@@ -2678,9 +2678,9 @@ for item in ${appinstall[@]}; do
 done
 mkdir -p /var/www/openmediavault/extplorer > /dev/null 2>&1
 cd /var/www/openmediavault/extplorer > /dev/null 2>&1
-wget 'http://netcologne.dl.sourceforge.net/project/extplorer/extplorer/eXtplorer_2.1.3.zip' -O /var/www/openmediavault/extplorer/eXtplorer_2.1.3.zip > /dev/null 2>&1
-unzip -o /var/www/openmediavault/extplorer/eXtplorer_2.1.3.zip -d /var/www/openmediavault/extplorer > /dev/null 2>&1
-rm -Rf /var/www/openmediavault/extplorer/eXtplorer_2.1.3.zip > /dev/null 2>&1
+wget 'http://netcologne.dl.sourceforge.net/project/extplorer/extplorer/eXtplorer_2.1.5.zip' -O /var/www/openmediavault/extplorer/eXtplorer_2.1.3.zip > /dev/null 2>&1
+unzip -o /var/www/openmediavault/extplorer/eXtplorer_2.1.5.zip -d /var/www/openmediavault/extplorer > /dev/null 2>&1
+rm -Rf /var/www/openmediavault/extplorer/eXtplorer_2.1.5.zip > /dev/null 2>&1
 chown openmediavault:openmediavault -R /var/www/openmediavault/extplorer > /dev/null 2>&1
 chmod 755 -R /var/www/openmediavault/extplorer > /dev/null 2>&1
 chmod 777 -R /var/www/openmediavault/extplorer/ftp_tmp > /dev/null 2>&1
