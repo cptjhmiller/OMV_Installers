@@ -2438,7 +2438,7 @@ elif [ "$sbd" == "1" ]; then
 elif [ "$sbt" == "1" ]; then
 	echo "                           TORRENT BRANCH"
 	echo "Downloading and installing SickBeard.....";
-	git clone git://github.com/danielthor/sickbeard-orange.git new_SB > /dev/null
+	git clone git://github.com/echel0n/SickRage.git new_SB > /dev/null
 	ret=$?
 	if ! test "$ret" -eq 0; then
 		echo >&2 "git clone SickBeard failed with exit status $ret"
